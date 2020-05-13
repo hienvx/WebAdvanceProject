@@ -8,3 +8,4 @@ Các nhóm liên kết:
 
 Tài khoản mongo Atlas:(mọi người điền email vào đây)
 - nhutthanh340@gmail.com
+- truongdaitin98@gmail.com
