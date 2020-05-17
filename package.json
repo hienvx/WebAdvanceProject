@@ -1,0 +1,30 @@
+{
+  "name": "internet-package",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DTin98/WebAdvanceProject.git"
+  },
+  "keywords": [
+    "ib"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DTin98/WebAdvanceProject/issues"
+  },
+  "homepage": "https://github.com/DTin98/WebAdvanceProject#readme",
+  "dependencies": {
+    "express-handlebars": "^4.0.4",
+    "http-errors": "^1.7.3",
+    "mongodb": "^3.5.7"
+  },
+  "devDependencies": {
+    "lerna": "^3.21.0"
+  }
+}
