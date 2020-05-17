@@ -15,5 +15,5 @@ Tài khoản mongo Atlas:(mọi người điền email vào đây)
 1. Cài đặt Nodejs (bắt buộc)
 2. Mở powershell chạy lệnh
 `npx lerna bootstrap`
-3. Triển khai ứng dụng
+3. Triển khai ứng dụng 
 `npx lerna start`
