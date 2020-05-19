@@ -1,4 +1,4 @@
-![Node.js CI](https://github.com/DTin98/WebAdvanceProject/workflows/Node.js%20CI/badge.svg)
+![Node.js CI](https://github.com/DTin98/WebAdvanceProject/workflows/Node.js%20CI/badge.svg) ![Deploy to Amazon ECS](https://github.com/DTin98/WebAdvanceProject/workflows/Deploy%20to%20Amazon%20ECS/badge.svg)
 # WebAdvanceProject
 Đồ án môn học lập trình Web nâng cao lớp TH2016/3
 Các nhóm liên kết:
