@@ -4,7 +4,7 @@ let logger = require('morgan');
 
 
 let accountsRouter = require('./routes/accounts');
-let {security} = require('./routes/securityAPI');
+
 
 let app = express();
 
@@ -15,7 +15,7 @@ app.use(cookieParser());
 
 
 
-app.use('/accounts', security, accountsRouter);
+app.use('/accounts', accountsRouter);
 
 
 // catch 404 and forward to error handler

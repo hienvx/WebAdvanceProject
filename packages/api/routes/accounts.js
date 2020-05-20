@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let DB = require('../../../scripts/db');
 const moment = require('moment');
+let {security} = require('./securityAPI');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
     res.send('Test api');
@@ -27,7 +28,7 @@ router.get('/:id', async function (req, res, next) {
 });
 
 
-router.post('/payment/Account',
+router.post('/payment/Account', security,
     async function (req, res, next) {
         /*
         * req.body.data = {
@@ -85,7 +86,7 @@ router.post('/payment/Account',
         }
     });
 
-router.post('/payment/NumberAccount',
+router.post('/payment/NumberAccount', security,
     async function (req, res, next) {
 
         /*
@@ -98,7 +99,7 @@ router.post('/payment/NumberAccount',
 
         /*
         * Thiếu bước giải mã gói tin
-        * */
+        */
 
         let numberAccount = req.body.numberAccount;
         let amount = req.body.amount;
