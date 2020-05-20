@@ -1,12 +1,14 @@
 let express = require('express');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
-
+let hbs = require('hbs');
 
 let accountsRouter = require('./routes/accounts');
 
 
 let app = express();
+
+app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
