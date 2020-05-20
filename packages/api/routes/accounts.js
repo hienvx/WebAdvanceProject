@@ -18,8 +18,8 @@ router.get('/:id', async function (req, res, next) {
     let customer = customers[0];
     let result = {
         "account": customer.account,
-        "paymentAccount": customer.paymentAccount,
-        "savingAccount": customer.savingAccount,
+        //"paymentAccount": customer.paymentAccount,
+        //"savingAccount": customer.savingAccount,
         "profile": customer.profile
     };
 
@@ -35,6 +35,10 @@ router.post('/payment/Account',
         *   "amount" : "", //số tiền nạp
         *   "employeeAccount": "" // tài khoản nhân viên nạp
         * }
+        * */
+
+        /*
+        * Thiếu bước giải mã gói tin
         * */
 
         let account = req.body.account;
@@ -91,6 +95,10 @@ router.post('/payment/NumberAccount',
             *   "employeeAccount": "" // tài khoản nhân viên nạp
             * }
             * */
+
+        /*
+        * Thiếu bước giải mã gói tin
+        * */
 
         let numberAccount = req.body.numberAccount;
         let amount = req.body.amount;
