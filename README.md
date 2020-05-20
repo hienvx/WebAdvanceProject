@@ -19,4 +19,4 @@ Tài khoản mongo Atlas:(mọi người điền email vào đây)
 3. Triển khai ứng dụng 
 `npx lerna run start`
 (hiển thị log ở terminal:
-`npx lerna run start --loglevel logger.debug`)
+`npx lerna run --parallel start`)
