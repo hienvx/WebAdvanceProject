@@ -3,81 +3,75 @@ const assert = require('assert');
 let url = "mongodb+srv://admin:P@ssw0rd@db-internet-banking-hoydq.gcp.mongodb.net";
 
 let dbName = 'DB'
-const Insert = async function(collectionName, data) {
+const Insert = async function (collectionName, data) {
     // Insert some documents
-    await MongoClient.connect(url, async function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-            let client = db.db(dbName);
-            let collection = client.collection(collectionName);
-            await collection.insertMany(data, function(err, result) {
-                assert.equal(err, null);
-                console.log("Inserted documents into the collection ", result);
-            });
+    let db = await MongoClient.connect(url);
 
-            db.close();
-            console.log("Closed connection to server");
-        }
-    });
+    if (!db) {
+        return false;
+    };
+
+    console.log('Connection established to', url);
+    let client = db.db(dbName);
+    let collection = client.collection(collectionName);
+    let status = await collection.insertMany(data);
+
+    await db.close();
+    console.log("Closed connection to server");
+    return status.result.ok > 0;
 };
 
-const Update = async function(collectionName, data, condition){
-    await MongoClient.connect(url, async function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-            let client = db.db(dbName);
-            let collection = client.collection(collectionName);
-            await collection.updateMany(condition, {$set: data}, function(err, result) {
-                assert.equal(err, null);
-                console.log("Updated documents into the collection ", result);
-            });
+const Update = async function (collectionName, data, condition) {
+    let db = await MongoClient.connect(url).catch(err => { console.log(err); });
 
-            db.close();
-            console.log("Closed connection to server");
-        }
-    });
+    if (!db) {
+        return false;
+    };
+
+    console.log('Connection established to', url);
+    let client = db.db(dbName);
+    let collection = client.collection(collectionName);
+    let status = await collection.updateMany(condition, {$set: data});
+
+    await db.close();
+    console.log("Closed connection to server");
+
+    return status.result.ok > 0;
 };
 
-const Delete = async function(collectionName, condition){
-    await MongoClient.connect(url, async function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-            let client = db.db(dbName);
-            let collection = client.collection(collectionName);
-            await collection.deleteMany(condition, function(err, result) {
-                assert.equal(err, null);
-                console.log("Deleted documents from the collection ", result);
-            });
+const Delete = async function (collectionName, condition) {
+    let db = await MongoClient.connect(url);
 
-            db.close();
-            console.log("Closed connection to server");
-        }
-    });
+    if (!db) {
+        return;
+    };
+
+    console.log('Connection established to', url);
+    let client = db.db(dbName);
+    let collection = client.collection(collectionName);
+    let status = await collection.deleteMany(condition);
+
+    await db.close();
+    console.log("Closed connection to server");
+    return status.result.ok > 0;
 };
 
-const Find = async function(collectionName, condition, sort, limit=0){
-    await MongoClient.connect(url, async function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-            let client = db.db(dbName);
-            let collection = client.collection(collectionName);
-            await collection.find(condition).sort(sort).limit(limit).toArray( function(err, result) {
-                assert.equal(err, null);
-                console.log("Find documents into the collection ", result);
-            });
+const Find = async function (collectionName, condition = {}, sort = {}, limit = 0) {
+    let db = await MongoClient.connect(url).catch(err => { console.log(err); });
 
-            db.close();
-            console.log("Closed connection to server");
-        }
-    });
+    if (!db) {
+        return;
+    };
+
+    console.log('Connection established to', url);
+    let client = db.db(dbName);
+    let collection = client.collection(collectionName);
+    let data = await collection.find(condition).sort(sort).limit(limit).toArray();
+
+    await db.close();
+    console.log("Closed connection to server");
+    return data;
+
 };
 
 let database = {

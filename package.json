@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^4.0.4",
     "http-errors": "^1.7.3",
+    "moment": "^2.25.3",
     "mongodb": "^3.5.7",
     "morgan": "^1.10.0"
   },
