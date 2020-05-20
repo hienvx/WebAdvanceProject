@@ -20,5 +20,3 @@ Tài khoản mongo Atlas:(mọi người điền email vào đây)
 `npx lerna run start`
 (hiển thị log ở terminal:
 `npx lerna run --parallel start`)
-
-Test something for pull request
