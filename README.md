@@ -18,3 +18,5 @@ Tài khoản mongo Atlas:(mọi người điền email vào đây)
 `npx lerna bootstrap`
 3. Triển khai ứng dụng 
 `npx lerna run start`
+`Hiển thị log ở terminal`
+`npx lerna run start --loglevel logger.debug`
