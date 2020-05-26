@@ -1,5 +1,5 @@
 const SHA256 = require("crypto-js/sha256");
-const AssociatedBank = require("../../../secrets/associated-bank.json");
+const AssociatedBank = require("../secrets/associated-bank.json");
 
 /** Body Example
  * {
