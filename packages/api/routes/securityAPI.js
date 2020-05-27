@@ -3,10 +3,14 @@ const AssociatedBank = require("../secrets/associated-bank.json");
 
 /** Body Example
  * {
- *      name_bank: "KiantoBank",
- *      code: "KAT",
- *      requestTime: 1589940146,
- *      signature: "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+ *      "name_bank": "KiantoBank", // Partner name (Ten ngan hang)
+ *      "code": "KAT", // Partner code
+ *      "data": {
+ *        // req.body.data
+ *      },
+ *      "requestTime": 1589940146, // Thoi gian con song cua package. Mac dinh 10s
+ *      "signature": "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ" // Ma hoa SHA256(body.json + requestTime + secretkey)
+ *      "pgp_sig": "-----BEGIN PGP SIGNED MESSAGE-----...-----END PGP SIGNATURE-----" // Chu ky ma ben B ky bang privateKey(PGP) cua ho
  * }
  */
 
@@ -30,7 +34,7 @@ const security = function (req, res, next) {
       message: "Request is out of date",
     });
 
-  //Validate signature
+  //Check original package
   if (
     SHA256(
       req.body + requestTime + AssociatedBank[code].secretKey

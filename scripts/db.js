@@ -11,7 +11,7 @@ const Insert = async function (collectionName, data) {
         return false;
     };
 
-    console.log('Connection established to', url);
+    console.log('Connection established server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
     let status = await collection.insertMany(data);
@@ -28,7 +28,7 @@ const Update = async function (collectionName, data, condition) {
         return false;
     };
 
-    console.log('Connection established to', url);
+    console.log('Connection established to server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
     let status = await collection.updateMany(condition, {$set: data});
@@ -46,7 +46,7 @@ const Delete = async function (collectionName, condition) {
         return;
     };
 
-    console.log('Connection established to', url);
+    console.log('Connection established to server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
     let status = await collection.deleteMany(condition);
@@ -63,7 +63,7 @@ const Find = async function (collectionName, condition = {}, sort = {}, limit = 
         return;
     };
 
-    console.log('Connection established to', url);
+    console.log('Connection established to server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
     let data = await collection.find(condition).sort(sort).limit(limit).toArray();

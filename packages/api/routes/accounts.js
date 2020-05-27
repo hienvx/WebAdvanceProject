@@ -3,12 +3,13 @@ let router = express.Router();
 let DB = require('../../../scripts/db');
 const moment = require('moment');
 let {security} = require('./securityAPI');
+let {securityPayment} = require('./securityAPIPayment');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
     res.send('Test api');
 });
 
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', security, async function (req, res, next) {
     let account = req.params.id;
     let customers = await DB.Find("customers", {"account": account});
 
@@ -28,7 +29,7 @@ router.get('/:id', async function (req, res, next) {
 });
 
 
-router.post('/payment/Account', security,
+router.post('/payment/Account', securityPayment,
     async function (req, res, next) {
         /*
         * req.body.data = {
@@ -42,9 +43,9 @@ router.post('/payment/Account', security,
         * Thiếu bước giải mã gói tin
         * */
 
-        let account = req.body.account;
-        let amount = req.body.amount;
-        let employeeAccount = req.body.employeeAccount;
+        let account = req.body.data.account;
+        let amount = req.body.data.amount;
+        let employeeAccount = req.body.data.employeeAccount;
 
         let customers = await DB.Find("customers", {"account": account});
 
@@ -86,7 +87,7 @@ router.post('/payment/Account', security,
         }
     });
 
-router.post('/payment/NumberAccount', security,
+router.post('/payment/NumberAccount', securityPayment,
     async function (req, res, next) {
 
         /*
@@ -101,9 +102,9 @@ router.post('/payment/NumberAccount', security,
         * Thiếu bước giải mã gói tin
         */
 
-        let numberAccount = req.body.numberAccount;
-        let amount = req.body.amount;
-        let employeeAccount = req.body.employeeAccount;
+        let numberAccount = req.body.data.numberAccount;
+        let amount = req.body.data.amount;
+        let employeeAccount = req.body.data.employeeAccount;
 
         let customers = await DB.Find(
             "customers",
@@ -112,7 +113,7 @@ router.post('/payment/NumberAccount', security,
                 "paymentAccount.numberAccount":numberAccount
 
             });
-        console.log(customers);
+        
         if (customers.length == 0) {
             res.send(false);
             return;
@@ -121,7 +122,7 @@ router.post('/payment/NumberAccount', security,
         let customer = customers[0];
         let currentBalance = customer.paymentAccount.currentBalance;
         let account = customer.account;
-
+        console.log('update');
         let status = await DB.Update(
             "customers",
             {

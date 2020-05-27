@@ -21,7 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/accounts", security, accountsRouter);
+// app.use("/accounts", security, accountsRouter);
+app.use("/accounts", accountsRouter);
 app.use("/demo", demoReactjs);
 
 // catch 404 and forward to error handler
