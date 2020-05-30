@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-let DB = require('../../../scripts/db');
+let DB = require('../scripts/db');
 const moment = require('moment');
 let {security} = require('./securityAPI');
 let {securityPayment} = require('./securityAPIPayment');

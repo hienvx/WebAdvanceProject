@@ -3,16 +3,16 @@ const SHA256 = require("crypto-js/sha256");
 const AssociatedBank = require("../secrets/associated-bank.json");
 const fs = require('fs');
 
+// Check publickey
 let publicKeyArmored = "";
-fs.readFile('packages/api/secrets/pgp/publickey-test.gpg', 'utf8', (err, data) => {
-  if (err) 
-    return res.status(403).send({
-        status: 403,
-        message: "No public key",
-      });
+// fs.readFile('packages/api/secrets/pgp/publickey-' + code + '.gpg', 'utf8', (err, data) => {
+//   if (err)  throw Error("No public key")
+//   publicKeyArmored = data;
+// });
+fs.readFile('secrets/pgp/publickey-test.gpg', 'utf8', (err, data) => {
+  if (err) throw Error("No public key")
   publicKeyArmored = data;
 });
-
 
 /** Body Example
  * {
@@ -34,23 +34,23 @@ const securityPayment = async function (req, res, next) {
   const signature = req.body.signature;
   const pgp_sig = req.body.pgp_sig;
 
-  // // Check bank have been added in list
-  // if (!AssociatedBank[code] || AssociatedBank[code].name !== name_bank)
-  //   return res.status(403).send({
-  //     status: 403,
-  //     message: "Bank have not associated yet",
-  //   });
+  // Check bank have been added in list
+  if (!AssociatedBank[code] || AssociatedBank[code].name !== name_bank)
+    return res.status(403).send({
+      status: 403,
+      message: "Bank have not associated yet",
+    });
 
-  // // Check out of date Default: 10s
-  // if (Date.now().valueOf() - requestTime > 10000)
-  //   return res.status(403).send({
-  //     status: 403,
-  //     message: "Request is out of date",
-  //   });
+  // Check out of date Default: 10s
+  if (Date.now().valueOf() - requestTime > 10000)
+    return res.status(403).send({
+      status: 403,
+      message: "Request is out of date",
+    });
 
-  // // Check original package
-  // if (SHA256(req.body + requestTime + AssociatedBank[code].secretKey).toString() !== signature)
-  //   return res.status(403).send({ status: 403, message: "Signature is wrong" });
+  // Check original package
+  if (SHA256(req.body + requestTime + AssociatedBank[code].secretKey).toString() !== signature)
+    return res.status(403).send({ status: 403, message: "Signature is wrong" });
 
   let clearText, publicKeys;
   try {
@@ -62,7 +62,7 @@ const securityPayment = async function (req, res, next) {
       message: err.toString()
     });
   }
-  
+
   // Verify Asymmetric Signature
   const verified = await openpgp.verify({
     message: clearText,           // parse armored message
