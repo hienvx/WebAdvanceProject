@@ -15,23 +15,22 @@ export function Recharge() {
             <div className="card-body">
                 <form action="#">
 
-                    <div className="form-check">
+                    <div className="form-check  form-check-inline">
                         <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" disabled={recharge.isSubmit}
                                value="option1" onChange={()=>dispatch(updateSelected(true))} checked={recharge.isUserAccountChecked}/>
                             <label className="form-check-label" htmlFor="exampleRadios1">
                                 User account
                             </label>
                     </div>
-                    <div className="form-check">
+
+                    <div className="form-check  form-check-inline">
                         <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"  disabled={recharge.isSubmit}
                                value="option2" onChange={()=>dispatch(updateSelected(false))}/>
                             <label className="form-check-label" htmlFor="exampleRadios2">
                                Number account
                             </label>
                     </div>
-
-
-
+                    
                     <div className="form-group" hidden={!recharge.isUserAccountChecked}>
                         <label>User account</label>
                         <input  type="text" className="form-control" readOnly={recharge.isSubmit}
