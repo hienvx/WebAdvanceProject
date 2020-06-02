@@ -1,7 +1,7 @@
-const openpgp = require('openpgp');
+const openpgp = require("openpgp");
 const SHA256 = require("crypto-js/sha256");
 const AssociatedBank = require("../secrets/associated-bank.json");
-const fs = require('fs');
+const fs = require("fs");
 
 // Check publickey
 let publicKeyArmored = "";
@@ -9,10 +9,14 @@ let publicKeyArmored = "";
 //   if (err)  throw Error("No public key")
 //   publicKeyArmored = data;
 // });
-fs.readFile('secrets/pgp/publickey-test.gpg', 'utf8', (err, data) => {
-  if (err) throw Error("No public key")
-  publicKeyArmored = data;
-});
+fs.readFile(
+  "./secrets/pgp/publickey-signature-test.gpg",
+  "utf8",
+  (err, data) => {
+    if (err) throw Error("No public key");
+    publicKeyArmored = data;
+  }
+);
 
 /** Body Example
  * {
@@ -49,7 +53,11 @@ const securityPayment = async function (req, res, next) {
     });
 
   // Check original package
-  if (SHA256(req.body + requestTime + AssociatedBank[code].secretKey).toString() !== signature)
+  if (
+    SHA256(
+      req.body.data + requestTime + AssociatedBank[code].secretKey
+    ).toString() !== signature
+  )
     return res.status(403).send({ status: 403, message: "Signature is wrong" });
 
   let clearText, publicKeys;
@@ -59,22 +67,22 @@ const securityPayment = async function (req, res, next) {
   } catch (err) {
     return res.status(403).send({
       status: 403,
-      message: err.toString()
+      message: err.toString(),
     });
   }
 
   // Verify Asymmetric Signature
   const verified = await openpgp.verify({
-    message: clearText,           // parse armored message
-    publicKeys: publicKeys.keys // for verification
+    message: clearText, // parse armored message
+    publicKeys: publicKeys.keys, // for verification
   });
   const { valid } = verified.signatures[0];
   if (valid) {
-    console.log('Signed by key id ' + verified.signatures[0].keyid.toHex());
+    console.log("Signed by key id " + verified.signatures[0].keyid.toHex());
   } else {
     return res.status(403).send({
       status: 403,
-      message: 'Signature could not be verified'
+      message: "Signature could not be verified",
     });
   }
 
