@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon ./index.js",
     "start": "node ./index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -35,5 +36,12 @@
     "openpgp": "^4.10.4",
     "react": "^16.13.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "axios": "^0.19.2",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
 }
