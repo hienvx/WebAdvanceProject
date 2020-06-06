@@ -3,13 +3,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {customerModel, submit, updateEmail, updateFullName, updatePhone, updateUserName} from "./CustomerAccountSlice";
 
 
-export function CreateCustomerAccount() {
+export function CreateCustomerAccount(props) {
     const dispatch = useDispatch();
     let customer = useSelector(customerModel);
 
 
     return (
-        <div className="card text-left">
+        <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
                 Sign up customer account
             </div>

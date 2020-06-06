@@ -4,13 +4,13 @@ import {historyModel, updateSelected} from "./HistorySlice";
 
 /*import Pagination from 'rc-pagination';*/
 
-export function History() {
+export function History(props) {
     const dispatch = useDispatch();
     const history = useSelector(historyModel);
     return (
-        <div className="card text-left">
+        <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
-                Recharge
+                History transaction
             </div>
             <div className="card-body">
                 <form action="#">

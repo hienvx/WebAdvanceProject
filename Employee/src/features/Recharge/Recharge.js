@@ -4,13 +4,13 @@ import {rechargeModel, updateAmount, updateNumberAccount, updateUserAccount, upd
 
 
 
-export function Recharge() {
+export function Recharge(props) {
     const dispatch = useDispatch();
     const recharge = useSelector(rechargeModel)
     return (
-        <div className="card text-left">
+        <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
-                Recharge
+                Recharged account
             </div>
             <div className="card-body">
                 <form action="#">
