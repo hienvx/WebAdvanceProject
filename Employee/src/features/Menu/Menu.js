@@ -58,14 +58,14 @@ export function Menu() {
                             $('#sidebar').toggleClass('active');
                         }}>
                             <i className="fa fa-bars"></i>
-                            <span className="sr-only">Toggle Menu</span>
+                            {/*<span className="sr-only">Toggle Menu</span>*/}
                         </button>
-                        <button className="btn btn-dark d-inline-block d-lg-none ml-auto" type="button"
+                        {/*<button className="btn btn-dark d-inline-block d-lg-none ml-auto" type="button"
                                 data-toggle="collapse"
                                 data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
                             <i className="fa fa-bars"></i>
-                        </button>
+                        </button>*/}
 
                         <h3>Internet banking</h3>
                     </div>
