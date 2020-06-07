@@ -5,9 +5,9 @@ export const rechargeSlice = createSlice({
     initialState: {
         userAccount: "",
         numberAccount: "",
-        amount:"0",
+        amount: "0",
         isUserAccountChecked: true,
-        iSubmit:false,
+        iSubmit: false,
     },
     reducers: {
 
@@ -23,14 +23,26 @@ export const rechargeSlice = createSlice({
             state.amount = action.payload;
         },
 
-        updateSelected:(state, action) =>{
+        updateSelected: (state, action) => {
             state.isUserAccountChecked = action.payload;
         },
-        submit: state=>{
+        submit: state => {
             state.isSubmit = true;
+        },
+
+        back: state => {
+            state.isSubmit = false;
+        },
+
+        resetValue: state => {
+            state.userAccount = "";
+            state.numberAccount = "";
+            state.amount = "0";
+            state.isUserAccountChecked = true;
+            state.iSubmit = false;
         }
     },
 });
 export const rechargeModel = state => state.rechargeSlice;
-export const {updateUserAccount, updateNumberAccount, updateAmount, updateSelected, submit} = rechargeSlice.actions;
+export const {updateUserAccount, updateNumberAccount, updateAmount, updateSelected, submit, back, resetValue} = rechargeSlice.actions;
 export default rechargeSlice.reducer;

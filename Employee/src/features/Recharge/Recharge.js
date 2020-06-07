@@ -6,42 +6,52 @@ import {
     updateNumberAccount,
     updateUserAccount,
     updateSelected,
-    submit
+    submit, back, resetValue
 } from "./RechargeSlice";
 
-/*import $ from 'jquery'
-
+import 'icheck-material/icheck-material.min.css'
+/*import $ from 'jquery'*/
+/*
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }*/
+
+/*$.fn.digits = function(){
+    return this.each(function(){
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") );
+    })
+}*/
+
 export function Recharge(props) {
     const dispatch = useDispatch();
-    const recharge = useSelector(rechargeModel)
+    const recharge = useSelector(rechargeModel);
+
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
                 Recharged account
             </div>
-            <div className="card-body">
+            <div className="card-body ">
                 <form action="#">
 
-                    <div className="form-check col-2">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
+                    <div className="form-check col-2 icheck-material-blue">
+                        <input className="form-check-input" type="radio" id="materialUnchecked"
+                               name="materialExampleRadios"
                                disabled={recharge.isSubmit}
-                               value="option1" onChange={() => dispatch(updateSelected(true))}
+                               onClick={() => dispatch(updateSelected(true))}
                                checked={recharge.isUserAccountChecked}/>
-                        <label className="form-check-label" htmlFor="exampleRadios1">
+                        <label className="form-check-label" for="materialUnchecked">
                             User account
                         </label>
                     </div>
 
-                    <div className="form-check col-4">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
-                               disabled={recharge.isSubmit}
-                               value="option2" onChange={() => dispatch(updateSelected(false))}
+                    <div className="form-check col-4 icheck-material-blue">
+                        <input className="form-check-input" type="radio"
+                               id="materialChecked" name="materialExampleRadios"
+                               disabled={recharge.isSubmit} onClick={() => dispatch(updateSelected(false))}
                                checked={!recharge.isUserAccountChecked}
                         />
-                        <label className="form-check-label" htmlFor="exampleRadios2">
+                        <label className="form-check-label" for="materialChecked">
                             Number account
                         </label>
                     </div>
@@ -49,18 +59,26 @@ export function Recharge(props) {
                     <br/>
                     <div className="form-group" hidden={!recharge.isUserAccountChecked}>
                         <label>User account</label>
-                        <input type="text" className="form-control" readOnly={recharge.isSubmit}
+                        <input type="text"
+                               className="form-control"
+                               readOnly={recharge.isSubmit}
                                onChange={e => {
                                    dispatch(updateUserAccount(e.target.value))
-                               }}/>
+                               }}
+                               value={recharge.userAccount}
+                        />
                     </div>
 
                     <div className="form-group" hidden={recharge.isUserAccountChecked}>
                         <label>Number account</label>
-                        <input type="text" className="form-control" readOnly={recharge.isSubmit}
+                        <input type="text"
+                               className="form-control"
+                               readOnly={recharge.isSubmit}
                                onChange={e => {
                                    dispatch(updateNumberAccount(e.target.value))
-                               }}/>
+                               }}
+                               value={recharge.numberAccount}
+                        />
                     </div>
 
                     <div className="form-group">
@@ -72,8 +90,9 @@ export function Recharge(props) {
                                    dispatch(updateAmount(e.target.value));
                                    /*alert(e.target.value);
                                    $("#inputAmount").text(formatNumber(e.target.value));*/
-
-                               }}/>
+                               }}
+                               value={recharge.amount}
+                        />
                     </div>
 
                     <input hidden={recharge.isSubmit} type="button" className="btn btn-primary" onClick={() => {
@@ -81,14 +100,32 @@ export function Recharge(props) {
                     }} value={"Submit"}>
                     </input>
 
-                    <input hidden={!recharge.isSubmit} type="button" className="btn btn-primary" onClick={() => {
-                        window.location.reload();
-                    }} value={"Back"}/>
+                    <input
+                        hidden={!recharge.isSubmit}
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                            dispatch(back());
+                        }} value={"Back"}/>
+
+                    <input
+                        hidden={recharge.isSubmit}
+                        style={{"margin-left": "20px"}}
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                            dispatch(resetValue());
+                        }} value={"Clear"}/>
+
                     <label hidden={!recharge.isSubmit} style={{"color": "green", "margin-left": "50px"}}>Recharge
                         successful</label>
+
+                    <label hidden={!recharge.isSubmit} style={{"color": "red", "margin-left": "50px"}}>Recharge
+                        Failed</label>
                 </form>
 
             </div>
+
             <div className="card-footer text-muted">
 
             </div>

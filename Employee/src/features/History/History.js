@@ -3,8 +3,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     historyModel,
     updateSelected,
-    updateFilterAndSearch
+    updateFilterAndSearch, searchUserAccount, searchNumberAccount
 } from "./HistorySlice";
+
+/*
+import 'icheck-material/icheck-material.min.css'
+*/
 
 /*import Pagination from 'rc-pagination';*/
 function RowItem(props) {
@@ -42,55 +46,87 @@ export function History(props) {
             <div className="card-body">
                 <form action="#">
 
-                    <div>
+                    <div className="form-check col-2 icheck-material-blue">
+                        <input className="form-check-input"
+                               type="radio"
+                               id="materialUnchecked1" name="materialExampleRadios1"
+                               onChange={() => {
+                                   dispatch(updateSelected(true));
+                               }}
+                               checked={history.isUserAccountChecked}/>
+                        <label className="form-check-label" htmlFor="materialUnchecked1">
+                            User account
+                        </label>
+                    </div>
+
+                    <div className="form-check col-4 icheck-material-blue">
+                        <input className="form-check-input"
+                               type="radio"
+                               onChange={() => {
+                                   dispatch(updateSelected(false));
+                               }}
+                               id="materialChecked1" name="materialExampleRadios1"
+                               checked={!history.isUserAccountChecked}/>
+                        <label className="form-check-label" htmlFor="materialChecked1">
+                            Number account
+                        </label>
+                    </div>
+
+                    <div hidden={history.isUserAccountChecked}>
                         <h5 className="page-header">Transaction type</h5>
 
                         <div className="col-3">
                             <select className="form-control" onChange={e => {
-                                let filter = {query: e.target.value, option:["type", "numberAccountFilter", "userAccountFilter"]};
-                                dispatch(updateFilterAndSearch(filter));
-                            }}>
+                                let filter = {
+                                    query: e.target.value,
+                                    option: ["type"]
+                                };
+
+                                dispatch(searchUserAccount(filter));
+                            }}
+                                    value={history.userAccountFilter.type}
+                            >
                                 <option value="0">Receive</option>
                                 <option value="1">Transfers</option>
                                 <option value="2">Payment</option>
                             </select>
                         </div>
                     </div>
-                    <br/>
 
+                    <div hidden={!history.isUserAccountChecked}>
+                        <h5 className="page-header">Transaction type</h5>
 
-                    <div className="form-check col-2">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
-                               value="option1" onChange={() => {
-                            dispatch(updateSelected(false));
-                        }} checked={!history.isUserAccountChecked}/>
-                        <label className="form-check-label" htmlFor="exampleRadios1">
-                            User account
-                        </label>
+                        <div className="col-3">
+                            <select className="form-control" onChange={e => {
+                                let filter = {
+                                    query: e.target.value,
+                                    option: ["type"]
+                                };
+                                dispatch(searchNumberAccount(filter));
+                            }}
+                                    value={history.numberAccountFilter.type}
+                            >
+                                <option value="0">Receive</option>
+                                <option value="1">Transfers</option>
+                                <option value="2">Payment</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div className="form-check col-4">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
-                               value="option2" onChange={() => {
-                            dispatch(updateSelected(true));
-                        }} checked={history.isUserAccountChecked}/>
-                        <label className="form-check-label" htmlFor="exampleRadios2">
-                            Number account
-                        </label>
-                    </div>
-
                     <br/>
+
                     <div className="form-group col-3" hidden={history.isUserAccountChecked}>
                         <label>User account</label>
                         <input type="text" className="form-control"
+
                                onChange={e => {
 
-                                   let filter = {query: e.target.value, option:["userAccountFilter"]};
+                                   let filter = {query: e.target.value, option: ["filter"]};
 
                                    clearTimeout(timer);
                                    let ms = 500; // milliseconds
                                    timer = setTimeout(function () {
-                                       dispatch(updateFilterAndSearch(filter));
+                                       dispatch(searchUserAccount(filter));
                                    }, ms);
 
                                }}/>
@@ -99,17 +135,18 @@ export function History(props) {
                     <div className="form-group col-3" hidden={!history.isUserAccountChecked}>
                         <label>Number account</label>
                         <input type="text" className="form-control"
+
                                onChange={e => {
-                                   let filter = {query: e.target.value, option:["numberAccountFilter"]};
+                                       let filter = {query: e.target.value, option: ["filter"]};
 
-                                   clearTimeout(timer);
-                                   let ms = 500; // milliseconds
-                                   timer = setTimeout(function () {
-                                       dispatch(updateFilterAndSearch(filter));
-                                   }, ms);
+                                       clearTimeout(timer);
+                                       let ms = 500; // milliseconds
+                                       timer = setTimeout(function () {
+                                           dispatch(searchNumberAccount(filter));
+                                       }, ms);
 
 
-                               }}/>
+                                   }}/>
                     </div>
 
                     <table className="table" hidden={history.isUserAccountChecked}>

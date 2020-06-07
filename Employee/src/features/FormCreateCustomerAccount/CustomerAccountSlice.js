@@ -20,6 +20,15 @@ export const customerAccount = createSlice({
         submit: (state, action) => {
             state.isSubmit = action.payload;
         },
+        resetValue: state => {
+            state.userName = "";
+            state.password = password;
+            state.passwordHash = "";//bcrypt.hashSync(password, saltRounds),
+            state.fullName = "";
+            state.email = "";
+            state.phone = "";
+            state.isSubmit = false;
+        },
         updateUserName: (state, action) => {
 
             state.userName = action.payload;
@@ -37,5 +46,5 @@ export const customerAccount = createSlice({
     },
 });
 export const customerModel = state => state.customerAccount;
-export const {submit, updateUserName, updateFullName, updateEmail, updatePhone} = customerAccount.actions;
+export const {submit, updateUserName, updateFullName, updateEmail, updatePhone, resetValue} = customerAccount.actions;
 export default customerAccount.reducer;
