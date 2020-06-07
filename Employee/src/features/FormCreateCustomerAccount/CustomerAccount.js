@@ -46,7 +46,7 @@ export function CreateCustomerAccount(props) {
 
                     <div className="form-group">
                         <label>Phone</label>
-                        <input readOnly={customer.isSubmit} required type="text" className="form-control"
+                        <input readOnly={customer.isSubmit} required type="phone" className="form-control"
                                onChange={e => dispatch(updatePhone(e.target.value))}/>
                     </div>
 

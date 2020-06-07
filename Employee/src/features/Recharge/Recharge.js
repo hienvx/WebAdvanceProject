@@ -9,7 +9,11 @@ import {
     submit
 } from "./RechargeSlice";
 
+/*import $ from 'jquery'
 
+function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}*/
 export function Recharge(props) {
     const dispatch = useDispatch();
     const recharge = useSelector(rechargeModel)
@@ -35,7 +39,7 @@ export function Recharge(props) {
                         <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
                                disabled={recharge.isSubmit}
                                value="option2" onChange={() => dispatch(updateSelected(false))}
-                               checked={recharge.isUserAccountChecked}
+                               checked={!recharge.isUserAccountChecked}
                         />
                         <label className="form-check-label" htmlFor="exampleRadios2">
                             Number account
@@ -61,9 +65,14 @@ export function Recharge(props) {
 
                     <div className="form-group">
                         <label>Amount</label>
-                        <input type="number" className="form-control" readOnly={recharge.isSubmit}
+                        <input type="text" id={"inputAmount"}
+                               className="form-control"
+                               readOnly={recharge.isSubmit}
                                onChange={e => {
                                    dispatch(updateAmount(e.target.value));
+                                   /*alert(e.target.value);
+                                   $("#inputAmount").text(formatNumber(e.target.value));*/
+
                                }}/>
                     </div>
 
