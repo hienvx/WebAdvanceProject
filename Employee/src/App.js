@@ -1,26 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+/*import {Recharge} from "./features/Recharge/Recharge";*/
+import {History} from "./features/History/History";
+import {Menu} from "./features/Menu/Menu";
+
+/*import {CreateCustomerAccount} from "./features/FormCreateCustomerAccount/CustomerAccount";*/
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            {/* <CreateCustomerAccount/>*/}
+            {/*<Recharge/>*/}
+            {/* <History/>*/}
+            <Menu/>
+        </div>
+    );
 }
 
 export default App;
