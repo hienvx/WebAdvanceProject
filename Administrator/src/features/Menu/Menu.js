@@ -1,11 +1,12 @@
 import React from "react";
 import $ from "jquery";
 /*import {CreateCustomerAccount} from "../FormCreateCustomerAccount/CustomerAccount";
-import {History} from "../History/History";
+import {Login} from "../Login/Login";
 import {Recharge} from "../Recharge/Recharge";*/
 import {useDispatch, useSelector} from "react-redux";
 import {menuModel, selectCategory} from "./MenuSlice";
 import {History} from "../History/History";
+import {Login} from "../Login/Login";
 
 
 export function Menu() {
@@ -68,7 +69,8 @@ export function Menu() {
 
                 {/*<CreateCustomerAccount hidden={menu.categorySelected !== 0}/>
                 <Recharge hidden={menu.categorySelected !== 1}/>*/}
-                <History hidden={menu.categorySelected !== 1}/>
+               {/* <History hidden={menu.categorySelected !== 1}/>*/}
+               <Login/>
             </div>
         </div>
     );
