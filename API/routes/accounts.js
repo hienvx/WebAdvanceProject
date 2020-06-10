@@ -8,6 +8,12 @@ let {securityPayment} = require('./securityAPIPayment');
 router.get('/', function (req, res, next) {
     res.send('Test api');
 });
+const AuthMiddleWare = require("../scripts/AuthMiddleware");
+const AuthController = require("../scripts/AuthController");
+
+router.post("/Auth/login", AuthController.login);
+router.post("/Auth/refresh-token", AuthController.refreshToken);
+router.use(AuthMiddleWare.isAuth);
 
 router.get('/:id', security, async function (req, res, next) {
     let account = req.params.id;

@@ -7,6 +7,7 @@ let dateEnd = date.format("yyyy-MM-DD");
 let dateStart = date.clone().startOf('month').format("yyyy-MM-DD");
 
 let getData = function (state) {
+
     state.dataUserAccount = [
         {account: "1", type: 1, amount: "1000", time: "02/06/2020", bank: "ACB"},
         {account: "2", type: 2, amount: "7000", time: "21/06/2020", bank: "Sacombank"},
@@ -21,12 +22,14 @@ let getData = function (state) {
         {account: "1", type: 2, amount: "2000", time: "23/06/2020", bank: "ACB"},
         {account: "3", type: 0, amount: "3000", time: "23/06/2020", bank: "Sacombank"}
     ];
+
     state.dataUserAccount = state.dataUserAccount.filter(item =>
             (item.bank == state.userAccountFilter.bankSelected || state.userAccountFilter.bankSelected == 'all')
         /*&&
         item.time >= state.userAccountFilter.dateStart &&
         item.time <= state.userAccountFilter.dateEnd*/
     );
+
     state.dataUserAccount.sort(function(a, b){
         if(a.bank < b.bank) { return -1; }
         if(a.bank > b.bank) { return 1; }
