@@ -1,4 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
+
 
 const loginSlice = createSlice({
     name: 'loginSlice',
@@ -18,7 +21,8 @@ const loginSlice = createSlice({
             }
         },
         doLogin: state => {
-
+            const hash = bcrypt.hashSync(state.password, saltRounds);
+            alert(hash);
         }
     },
 });
