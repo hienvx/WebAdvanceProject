@@ -1,51 +1,69 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
+const axios = require('axios').default;
 let moment = require('moment');
 
 let date = moment();
 let dateEnd = date.format("yyyy-MM-DD");
 let dateStart = date.clone().startOf('month').format("yyyy-MM-DD");
 
-let getData = function (state) {
+let getData = async function () {
 
-    state.dataUserAccount = [
-        {account: "1", type: 1, amount: "1000", time: "02/06/2020", bank: "ACB"},
-        {account: "2", type: 2, amount: "7000", time: "21/06/2020", bank: "Sacombank"},
-        {account: "3", type: 0, amount: "5000", time: "25/06/2020", bank: "ACB"},
-        {account: "1", type: 2, amount: "4000", time: "27/06/2020", bank: "Viettin"},
-        {account: "2", type: 2, amount: "2000", time: "23/06/2020", bank: "ACB"},
-        {account: "3", type: 0, amount: "3000", time: "23/06/2020", bank: "Viettin"},
-        {account: "2", type: 1, amount: "1000", time: "20/06/2020", bank: "Viettin"},
-        {account: "2", type: 1, amount: "7000", time: "21/06/2020", bank: "ACB"},
-        {account: "1", type: 0, amount: "5000", time: "25/06/2020", bank: "Sacombank"},
-        {account: "2", type: 1, amount: "4000", time: "27/06/2020", bank: "Viettin"},
-        {account: "1", type: 2, amount: "2000", time: "23/06/2020", bank: "ACB"},
-        {account: "3", type: 0, amount: "3000", time: "23/06/2020", bank: "Sacombank"}
-    ];
+    let data = await axios.post("http://localhost:3000/history",
 
-    state.dataUserAccount = state.dataUserAccount.filter(item =>
+        {
+            condition: {account: "nhutthanh340"},
+            sort: {time: -1}
+        }
+    ).then(result => {
+        return result.data;
+    }).catch(() => {
+        return [];
+    });
+
+    /*state.dataUserAccount = state.dataUserAccount.filter(item =>
             (item.bank == state.userAccountFilter.bankSelected || state.userAccountFilter.bankSelected == 'all')
-        /*&&
+        /!*&&
         item.time >= state.userAccountFilter.dateStart &&
-        item.time <= state.userAccountFilter.dateEnd*/
-    );
+        item.time <= state.userAccountFilter.dateEnd*!/
+    );*/
 
-    state.dataUserAccount.sort(function(a, b){
-        if(a.bank < b.bank) { return -1; }
-        if(a.bank > b.bank) { return 1; }
+    data.sort(function (a, b) {
+        if (a.bank < b.bank) {
+            return -1;
+        }
+        if (a.bank > b.bank) {
+            return 1;
+        }
         return 0;
     });
+    return data;
 };
+
+let getListBanks = async function () {
+    return await axios.get("http://localhost:3000/banks").then(result => {
+        return result.data;
+    }).catch(() => {
+        return [];
+    });
+};
+
+export const doGetDataThunk = createAsyncThunk(
+    'doGetDataThunk',
+    async (data, thunkAPI) => {
+        thunkAPI.dispatch(updateValue({value: false, option: ["isStart"]}));
+        /*        let banks = await getListBanks();
+                thunkAPI.dispatch(updateValue({value: banks, option: ["banks"]}));*/
+
+        let dataUserAccount = await getData();
+        thunkAPI.dispatch(updateValue({value: dataUserAccount, option: ["dataUserAccount"]}));
+    }
+);
 
 const historySlice = createSlice({
     name: 'historySlice',
     initialState: {
-        banks: [
-            "ACB",
-            "Sacombank",
-            "Viettin",
-            "BIDV"
-        ],
+        banks: [],
         total: 0,
 
         dataUserAccount: [],
@@ -53,11 +71,31 @@ const historySlice = createSlice({
             bankSelected: "all",
             dateStart: dateStart,
             dateEnd: dateEnd,
-        }
-
+        },
+        isStart: true
+    },
+    extraReducers: {
+        // Add reducers for additional action types here, and handle loading state as needed
+        [doGetDataThunk.fulfilled]: (state, action) => {
+            // Add user to the state array
+            /*state.entities.push(action.payload)*/
+        },
     },
     reducers: {
+        updateValue: (state, action) => {
+            if (action.payload.option.includes("banks")) {
+                state.banks = action.payload.value;
+            }
 
+            if (action.payload.option.includes("isStart")) {
+                state.isStart = action.payload.value;
+            }
+
+            if (action.payload.option.includes("dataUserAccount")) {
+                state.dataUserAccount = action.payload.value;
+            }
+
+        },
         searchUserAccount: (state, action) => {
             if (action.payload.option.includes("bankSelected")) {
                 state.userAccountFilter.bankSelected = action.payload.query;
@@ -71,7 +109,7 @@ const historySlice = createSlice({
                 state.userAccountFilter.dateEnd = action.payload.query;
             }
 
-            getData(state);
+            doGetDataThunk();
 
             state.total = 0.0;
             state.dataUserAccount.map((value, index) => {
@@ -82,5 +120,5 @@ const historySlice = createSlice({
     },
 });
 export const historyModel = state => state.historySlice;
-export const {searchUserAccount} = historySlice.actions;
+export const {searchUserAccount, updateValue} = historySlice.actions;
 export default historySlice.reducer;

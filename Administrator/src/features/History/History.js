@@ -1,22 +1,15 @@
 import React from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {
+    doGetDataThunk,
     historyModel,
     searchUserAccount
 } from "./HistorySlice";
 
-import $ from 'jquery';
-
-/*
-import 'icheck-material/icheck-material.min.css'
-*/
-
-/*import Pagination from 'rc-pagination';*/
 let typeTransaction = ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"];
 
 function RowItem(props) {
     return (
-
         <tr>
             <th scope="row">{props.stt}</th>
             <td>{props.data.bank}</td>
@@ -61,6 +54,9 @@ export function History(props) {
             option: ["bankSelected"]
         };
         dispatch(searchUserAccount(filter));*/
+    if(history.isStart){
+        dispatch(doGetDataThunk());
+    }
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
@@ -113,7 +109,7 @@ export function History(props) {
                             >
                                 <option value={"all"}>All</option>
                                 {history.banks.map((value, index) => {
-                                    return <option value={value}>{value}</option>
+                                    return <option value={value.name}>{value.name}</option>
                                 })}
 
                             </select>

@@ -7,6 +7,9 @@ const bodyParser = require("body-parser");
 const cors = require('cors')
 
 const accountsRouter = require("./routes/accounts");
+const historyTransactionRouter = require("./routes/historyTransaction");
+const banksConnectedRouter = require('./routes/banksConnected');
+
 const demoReactjs = require("./routes/demoReactjs");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
@@ -26,6 +29,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/test-security-api", security);
 app.use("/test-security-api-payment", securityPayment);
 app.use("/accounts", accountsRouter);
+app.use("/history", historyTransactionRouter);
+app.use('/banks', banksConnectedRouter);
 // app.use("/accounts", accountsRouter);
 app.use("/demo", demoReactjs);
 

@@ -12,7 +12,7 @@ export function Login(props) {
     const login = useSelector(loginModel);
 
     return (
-        <div>
+        <div className={"col-4 login-center"}>
             <div className="card text-left" hidden={props.hidden}>
                 <div className="card-header">
                     History transaction
