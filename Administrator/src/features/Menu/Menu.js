@@ -22,13 +22,13 @@ export function Menu() {
                             <li className={menu.categorySelected === 0 ? "active" : null}>
                                 <a onClick={() => {
                                     dispatch(selectCategory(0))
-                                }}>Manage employee</a>
+                                }}>Quản lý nhân viên</a>
                             </li>
 
                             <li className={menu.categorySelected === 1 ? "active" : null}>
                                 <a onClick={() => {
                                     dispatch(selectCategory(1))
-                                }}>History transaction</a>
+                                }}>Lịch sử giao dịch</a>
                             </li>
 
                         </ul>
@@ -69,7 +69,7 @@ export function Menu() {
                             <button type="button" className="btn btn-primary" onClick={() => {
                                 dispatch(doLogoutThunk());
                             }}>
-                                Logout
+                                Đăng xuất
                             </button>
 
                         </div>

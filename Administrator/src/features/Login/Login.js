@@ -15,19 +15,19 @@ export function Login(props) {
         <div className={"col-4 login-center"}>
             <div className="card text-left" hidden={props.hidden}>
                 <div className="card-header">
-                    History transaction
+                    Đăng nhập
                 </div>
                 <div className="card-body">
                     <form action="#">
                         <div className="form-group">
-                            <label>User account</label>
+                            <label>Tài khoản</label>
                             <input type="text" className="form-control" value={login.userName}
                                    onChange={(e) => {
                                        dispatch(updateValue({value: e.target.value, option: ["userName"]}))
                                    }}/>
                         </div>
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>Mật khẩu</label>
                             <input type="password" className="form-control" value={login.password}
                                    onChange={(e) => {
                                        dispatch(updateValue({value: e.target.value, option: ["password"]}))
@@ -36,7 +36,7 @@ export function Login(props) {
                         <button  type="button" className="btn btn-primary" onClick={async () => {
                             dispatch(doLoginThunk());
                         }}>
-                            <span hidden={login.isLoading}>Login</span>
+                            <span hidden={login.isLoading}>Đăng nhập</span>
                             <span hidden={!login.isLoading} className="spinner-border text-dark">
                             </span>
                         </button>

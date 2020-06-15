@@ -20,11 +20,12 @@ router.post("/", async function (req, res, next) {
         {account: "nhutthanh345", type: 0, amount: "9000", time: date.unix(), bank: "Sacombank", performer:{type:"employee", account:"employee1"}}
     ]);
     res.json({"ok":true});*/
-/*    req.body.condition = {account: "nhutthanh340"}
-    req.body.sort = {"time": -1}*/
+    /*    req.body.condition = {account: "nhutthanh340"}
+        req.body.sort = {"time": -1}*/
 
-    let results = await DB.Find("transaction_history", req.body.condition, req.body.sort);
-    res.json(results);
+    let results = await DB.Find("transaction_history", req.body.condition, req.body.sort, req.body.limit, req.body.skip);
+    let total = await DB.Find("transaction_history", req.body.condition, req.body.sort).then(result=>result.length);
+    res.json({results, total:total});
 
 });
 
