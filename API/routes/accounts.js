@@ -12,9 +12,12 @@ router.post("/", function (req, res, next) {
 const AuthMiddleWare = require("../scripts/AuthMiddleware");
 const AuthController = require("../scripts/AuthController");
 
+router.post("/Auth/isAuth", AuthMiddleWare.isAuth);
 router.post("/Auth/login", AuthController.login);
+router.post("/Auth/logout", AuthController.logout);
+/*router.use(AuthMiddleWare.isAuth);*/
 router.post("/Auth/refresh-token", AuthController.refreshToken);
-router.use(AuthMiddleWare.isAuth);
+
 
 router.get("/:id", security, async function (req, res, next) {
   let account = req.params.id;
