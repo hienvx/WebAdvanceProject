@@ -1,5 +1,4 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {paleturquoise} from "color-name";
 
 const axios = require('axios').default;
 let moment = require('moment');

@@ -2,15 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f6b7a-a263-40f5-8a02-63297fcaf437" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/routes/banksConnected.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/routes/historyTransaction.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/routes/employees.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Administrator/src/features/ManageEmployee/FormEmployee/Employee.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Administrator/src/features/ManageEmployee/FormEmployee/EmployeeSlice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Administrator/src/features/ManageEmployee/Manage.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Administrator/src/features/ManageEmployee/ManageSlice.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Administrator/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Administrator/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Administrator/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Administrator/src/app/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/app/store.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Administrator/src/features/History/History.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/features/History/History.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Administrator/src/features/History/HistorySlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/features/History/HistorySlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Administrator/src/features/Login/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/features/Login/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Administrator/src/features/Menu/Menu.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Administrator/src/features/Menu/Menu.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,8 +26,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="32" column="40" selection-start-line="32" selection-start-column="40" selection-end-line="32" selection-end-column="40" />
+            <state relative-caret-position="156">
+              <caret line="33" column="39" lean-forward="true" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -32,17 +35,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/accounts.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-51">
+            <state relative-caret-position="-612">
               <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="33" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/historyTransaction.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="322">
+              <caret line="26" column="116" lean-forward="true" selection-start-line="26" selection-start-column="87" selection-end-line="26" selection-end-column="116" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/routes/employees.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="237">
+              <caret line="72" column="36" lean-forward="true" selection-start-line="72" selection-start-column="36" selection-end-line="72" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -68,8 +80,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/db.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="79" column="82" selection-start-line="79" selection-start-column="63" selection-end-line="79" selection-end-column="82" />
+            <state relative-caret-position="-153">
+              <caret line="63" column="90" selection-start-line="63" selection-start-column="90" selection-end-line="63" selection-end-column="90" />
             </state>
           </provider>
         </entry>
@@ -77,7 +89,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/AuthMiddleware.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
+            <state relative-caret-position="1020">
               <caret line="60" column="29" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="29" />
             </state>
           </provider>
@@ -102,9 +114,11 @@
         <option value="$PROJECT_DIR$/scripts/AuthMiddleware.js" />
         <option value="$PROJECT_DIR$/scripts/AuthController.js" />
         <option value="$PROJECT_DIR$/routes/accounts.js" />
-        <option value="$PROJECT_DIR$/index.js" />
         <option value="$PROJECT_DIR$/routes/banksConnected.js" />
+        <option value="$PROJECT_DIR$/scripts/db.js" />
         <option value="$PROJECT_DIR$/routes/historyTransaction.js" />
+        <option value="$PROJECT_DIR$/index.js" />
+        <option value="$PROJECT_DIR$/routes/employees.js" />
       </list>
     </option>
   </component>
@@ -205,7 +219,8 @@
       <option name="presentableId" value="Default" />
       <updated>1592105970822</updated>
       <workItem from="1592105971981" duration="17251000" />
-      <workItem from="1592181552315" duration="15063000" />
+      <workItem from="1592181552315" duration="18266000" />
+      <workItem from="1592268131386" duration="9492000" />
     </task>
     <task id="LOCAL-00001" summary="Update package-lock.json">
       <created>1592106491074</created>
@@ -225,7 +240,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32314000" />
+    <option name="totallyTimeSpent" value="45009000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -236,7 +251,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.5220949" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28968903" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -274,27 +289,6 @@
         <state relative-caret-position="-1593" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/AuthMiddleware.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="60" column="29" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/db.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="79" column="82" selection-start-line="79" selection-start-column="63" selection-end-line="79" selection-end-column="82" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="32" column="40" selection-start-line="32" selection-start-column="40" selection-end-line="32" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/AuthController.js">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -302,10 +296,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/accounts.js">
+    <entry file="file://$PROJECT_DIR$/scripts/AuthMiddleware.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-51">
-          <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="33" />
+        <state relative-caret-position="1020">
+          <caret line="60" column="29" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="33" column="39" lean-forward="true" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -316,10 +317,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/db.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-153">
+          <caret line="63" column="90" selection-start-line="63" selection-start-column="90" selection-end-line="63" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/accounts.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-612">
+          <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/routes/historyTransaction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="322">
+          <caret line="26" column="116" lean-forward="true" selection-start-line="26" selection-start-column="87" selection-end-line="26" selection-end-column="116" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/employees.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="72" column="36" lean-forward="true" selection-start-line="72" selection-start-column="36" selection-end-line="72" selection-end-column="36" />
         </state>
       </provider>
     </entry>

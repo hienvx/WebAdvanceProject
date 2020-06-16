@@ -3,11 +3,13 @@ import $ from "jquery";
 import {useDispatch, useSelector} from "react-redux";
 import {doCheckLoginThunk, doLogoutThunk, menuModel, selectCategory} from "./MenuSlice";
 import {History} from "../History/History";
+import {Manage} from "../ManageEmployee/Manage";
+import {Employee} from "../ManageEmployee/FormEmployee/Employee";
 
 export function Menu() {
     const dispatch = useDispatch();
     const menu = useSelector(menuModel);
-    if(menu.isLogin == false){
+    if (menu.isLogin == false) {
         dispatch(doCheckLoginThunk())
     }
 
@@ -19,7 +21,7 @@ export function Menu() {
                     <div className="p-4 pt-5">
 
                         <ul className="list-unstyled components mb-5">
-                            <li className={menu.categorySelected === 0 ? "active" : null}>
+                            <li className={menu.categorySelected === 0 || menu.categorySelected === 2 ? "active" : null}>
                                 <a onClick={() => {
                                     dispatch(selectCategory(0))
                                 }}>Quản lý nhân viên</a>
@@ -77,7 +79,9 @@ export function Menu() {
 
                     {/*<CreateCustomerAccount hidden={menu.categorySelected !== 0}/>
                 <Recharge hidden={menu.categorySelected !== 1}/>*/}
+                    <Manage hidden={menu.categorySelected !== 0}/>
                     <History hidden={menu.categorySelected !== 1}/>
+                    <Employee hidden={menu.categorySelected !== 2}/>
 
                 </div>
             </div>
