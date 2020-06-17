@@ -1,5 +1,5 @@
 let MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+
 let url = "mongodb+srv://admin:P@ssw0rd@db-internet-banking-hoydq.gcp.mongodb.net";
 
 let dbName = 'DB'
@@ -60,14 +60,13 @@ const Find = async function (collectionName, condition = {}, sort = {}, limit = 
     let db = await MongoClient.connect(url).catch(err => { console.log(err); });
 
     if (!db) {
-        return;
+        return [];
     };
 
     console.log('Connection established to server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
     let data = await collection.find(condition).sort(sort).limit(limit).toArray();
-
     await db.close();
     console.log("Closed connection to server");
     return data;

@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const accountsRouter = require("./routes/accounts");
 const demoReactjs = require("./routes/demoReactjs");
 const { security } = require("./routes/securityAPI");
+const { securityPayment } = require("./routes/securityAPIPayment");
 
 const app = express();
 
@@ -21,8 +22,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use("/accounts", security, accountsRouter);
-app.use("/accounts", accountsRouter);
+app.use("/test-security-api", security);
+app.use("/test-security-api-payment", securityPayment);
+app.use("/accounts", security, accountsRouter);
+// app.use("/accounts", accountsRouter);
 app.use("/demo", demoReactjs);
 
 // catch 404 and forward to error handler
