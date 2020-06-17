@@ -10,6 +10,7 @@ const accountsRouter = require("./routes/accounts");
 const historyTransactionRouter = require("./routes/historyTransaction");
 const banksConnectedRouter = require('./routes/banksConnected');
 const employeesRouter = require('./routes/employees');
+const customersRouter = require('./routes/customers');
 const demoReactjs = require("./routes/demoReactjs");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
@@ -32,6 +33,7 @@ app.use("/accounts", accountsRouter);
 app.use("/history", historyTransactionRouter);
 app.use('/banks', banksConnectedRouter);
 app.use('/employees', employeesRouter);
+app.use('/customers', customersRouter);
 // app.use("/accounts", accountsRouter);
 app.use("/demo", demoReactjs);
 
