@@ -2,30 +2,20 @@ import React from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {
     rechargeModel,
-    updateAmount,
-    updateNumberAccount,
-    updateUserAccount,
-    updateSelected,
-    submit, back, resetValue
+    updateValue,
+    resetValue,
+    doPaymentNumberAccountThunk,
+    doPaymentUserAccountThunk,
+    doGetNumberAccountThunk,
+    doGetUserAccountThunk
 } from "./RechargeSlice";
 
 import 'icheck-material/icheck-material.min.css'
-/*import $ from 'jquery'*/
-/*
-function formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-}*/
-
-/*$.fn.digits = function(){
-    return this.each(function(){
-        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") );
-    })
-}*/
 
 export function Recharge(props) {
     const dispatch = useDispatch();
     const recharge = useSelector(rechargeModel);
-
+    let timer;
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
@@ -38,7 +28,11 @@ export function Recharge(props) {
                         <input className="form-check-input" type="radio" id="materialUnchecked"
                                name="materialExampleRadios"
                                disabled={recharge.isSubmit}
-                               onClick={() => dispatch(updateSelected(true))}
+                               onClick={() => {
+                                   dispatch(updateValue({value: true, option: ["isUserAccountChecked"]}))
+                                   dispatch(doGetUserAccountThunk());
+                               }
+                               }
                                checked={recharge.isUserAccountChecked}/>
                         <label className="form-check-label" for="materialUnchecked">
                             Tài khoản
@@ -48,7 +42,11 @@ export function Recharge(props) {
                     <div className="form-check col-4 icheck-material-blue">
                         <input className="form-check-input" type="radio"
                                id="materialChecked" name="materialExampleRadios"
-                               disabled={recharge.isSubmit} onClick={() => dispatch(updateSelected(false))}
+                               disabled={recharge.isSubmit}
+                               onClick={() => {
+                                   dispatch(updateValue({value: false, option: ["isUserAccountChecked"]}));
+                                   dispatch(doGetNumberAccountThunk());
+                               }}
                                checked={!recharge.isUserAccountChecked}
                         />
                         <label className="form-check-label" for="materialChecked">
@@ -63,9 +61,18 @@ export function Recharge(props) {
                                className="form-control"
                                readOnly={recharge.isSubmit}
                                onChange={e => {
-                                   dispatch(updateUserAccount(e.target.value))
+
+                                   let filter = {value: e.target.value, option: ["userAccount"]};
+
+                                   clearTimeout(timer);
+                                   let ms = 1000; // milliseconds
+                                   timer = setTimeout(function () {
+                                       dispatch(updateValue(filter))
+                                       dispatch(doGetUserAccountThunk());
+                                   }, ms);
+
+
                                }}
-                               value={recharge.userAccount}
                         />
                     </div>
 
@@ -75,9 +82,18 @@ export function Recharge(props) {
                                className="form-control"
                                readOnly={recharge.isSubmit}
                                onChange={e => {
-                                   dispatch(updateNumberAccount(e.target.value))
+
+                                   let filter = {value: e.target.value, option: ["numberAccount"]};
+
+                                   clearTimeout(timer);
+                                   let ms = 1000; // milliseconds
+                                   timer = setTimeout(function () {
+                                       dispatch(updateValue(filter))
+                                       dispatch(doGetNumberAccountThunk());
+                                   }, ms);
+
+
                                }}
-                               value={recharge.numberAccount}
                         />
                     </div>
 
@@ -87,7 +103,7 @@ export function Recharge(props) {
                                className="form-control"
                                readOnly={recharge.isSubmit}
                                onChange={e => {
-                                   dispatch(updateAmount(e.target.value));
+                                   dispatch(updateValue({value: e.target.value, option: ["amount"]}));
                                    /*alert(e.target.value);
                                    $("#inputAmount").text(formatNumber(e.target.value));*/
                                }}
@@ -95,17 +111,26 @@ export function Recharge(props) {
                         />
                     </div>
 
-                    <input hidden={recharge.isSubmit} type="button" className="btn btn-primary" onClick={() => {
-                        dispatch(submit());
-                    }} value={"Nạp tiền"}>
-                    </input>
+
+                    <button hidden={recharge.isSubmit} type="button" className="btn btn-primary" onClick={async () => {
+                        if (recharge.isUserAccountChecked) {
+                            dispatch(doPaymentUserAccountThunk())
+                        } else {
+                            dispatch(doPaymentNumberAccountThunk())
+                        }
+
+                    }}>
+                        <span hidden={recharge.isLoading}>Nạp tiền</span>
+                        <span hidden={!recharge.isLoading} className="spinner-border text-dark">
+                            </span>
+                    </button>
 
                     <input
                         hidden={!recharge.isSubmit}
                         type="button"
                         className="btn btn-primary"
                         onClick={() => {
-                            dispatch(back());
+                            dispatch(updateValue({value: false, option: ["isSubmit"]}));
                         }} value={"Quay về"}/>
 
                     <input
@@ -117,11 +142,8 @@ export function Recharge(props) {
                             dispatch(resetValue());
                         }} value={"Xoá"}/>
 
-                    <label hidden={!recharge.isSubmit} style={{"color": "green", "margin-left": "50px"}}>Recharge
-                        successful</label>
-
-                    <label hidden={!recharge.isSubmit} style={{"color": "red", "margin-left": "50px"}}>Recharge
-                        Failed</label>
+                    <label hidden={recharge.message == ""}
+                           style={{"color": "red", "marginLeft": "50px"}}>{recharge.message}</label>
                 </form>
 
             </div>

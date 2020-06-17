@@ -41,7 +41,7 @@ router.post("/", async function (req, res, next) {
                     phone: req.body.profile.phone
                 },
             paymentAccount: {
-                numberAccount: time,
+                numberAccount: time.toString(),
                 currentBalance: req.body.paymentAccount.currentBalance
             },
             savingAccount: req.body.savingAccount

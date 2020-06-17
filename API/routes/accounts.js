@@ -21,12 +21,13 @@ router.post("/Auth/logout", AuthController.logout);
 router.post("/Auth/refresh-token", AuthController.refreshToken);
 
 
-router.get("/:id", security, async function (req, res, next) {
-  let account = req.params.id;
+router.get("/UserAccount/:userAccount", async function (req, res, next) {
+  let account = req.params.userAccount;
+
   let customers = await DB.Find("customers", { account: account });
 
   if (customers.length == 0) {
-    res.json([]);
+    res.send({"status": false, "message": "User is not exist", data:[]});
   }
 
   let customer = customers[0];
@@ -37,10 +38,30 @@ router.get("/:id", security, async function (req, res, next) {
     profile: customer.profile,
   };
 
-  res.json(result);
+  res.send({"status": true, "message": "", data:result});
 });
 
-router.post("/payment/Account", securityPayment, async function (
+router.get("/NumberAccount/:numberAccount", async function (req, res, next) {
+  let account = req.params.numberAccount;
+  let customers = await DB.Find("customers", { "paymentAccount.numberAccount": account });
+
+  if (customers.length == 0) {
+    res.send({"status": true, "message": "", data:[]});
+  }
+
+  let customer = customers[0];
+  let result = {
+    account: customer.account,
+    //"paymentAccount": customer.paymentAccount,
+    //"savingAccount": customer.savingAccount,
+    profile: customer.profile,
+  };
+
+  res.send({"status": true, "message": "", data: result});
+});
+
+
+router.post("/payment/Account", async function (
   req,
   res,
   next
@@ -56,8 +77,7 @@ router.post("/payment/Account", securityPayment, async function (
 
   /*
    * Thiếu bước giải mã gói tin
-   * */
-
+   */
   let account = req.body.data.account;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
@@ -65,7 +85,7 @@ router.post("/payment/Account", securityPayment, async function (
   let customers = await DB.Find("customers", { account: account });
 
   if (customers.length == 0) {
-    res.send(false);
+    res.send({"status": false, "message": "User is not exist"});
     return;
   }
 
@@ -95,13 +115,13 @@ router.post("/payment/Account", securityPayment, async function (
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
-    res.send(true);
+    res.send({"status": true, "message": ""});
   } else {
-    res.send(false);
+    res.send({"status": false, "message": "An error occurred"});
   }
 });
 
-router.post("/payment/NumberAccount", securityPayment, async function (
+router.post("/payment/NumberAccount", async function (
   req,
   res,
   next
@@ -118,7 +138,7 @@ router.post("/payment/NumberAccount", securityPayment, async function (
   /*
    * Thiếu bước giải mã gói tin
    */
-
+console.log(req.body.data)
   let numberAccount = req.body.data.numberAccount;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
@@ -129,14 +149,14 @@ router.post("/payment/NumberAccount", securityPayment, async function (
   });
 
   if (customers.length == 0) {
-    res.send(false);
+    res.send({"status": false, "message": "User is not exist"});
     return;
   }
 
   let customer = customers[0];
   let currentBalance = customer.paymentAccount.currentBalance;
   let account = customer.account;
-  console.log("update");
+
   let status = await DB.Update(
     "customers",
     {
@@ -162,9 +182,9 @@ router.post("/payment/NumberAccount", securityPayment, async function (
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
-    res.send(true);
+    res.send({"status": true, "message": ""});
   } else {
-    res.send(false);
+    res.send({"status": false, "message": "An error occurred"});
   }
 });
 
