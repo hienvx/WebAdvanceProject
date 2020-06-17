@@ -102,7 +102,7 @@ export function CreateCustomerAccount(props) {
                         dispatch(updateValue({value: false, option:["isSubmit"]}));
                     }} value={"Quay về"}/>
 
-                    <input style={{"margin-left": "20px"}}
+                    <input style={{"marginLeft": "20px"}}
                            hidden={customer.isSubmit}
                            type="button"
                            className="btn btn-primary"
@@ -110,7 +110,7 @@ export function CreateCustomerAccount(props) {
                                dispatch(resetValue());
                            }} value={"Xoá"}/>
 
-                    <label hidden={!customer.isSubmit} style={{"color": "red", "margin-left": "50px"}}>{customer.message}</label>
+                    <label hidden={!customer.isSubmit} style={{"color": "red", "marginLeft": "50px"}}>{customer.message}</label>
                 </form>
 
             </div>

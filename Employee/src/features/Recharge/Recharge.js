@@ -33,8 +33,9 @@ export function Recharge(props) {
                                    dispatch(doGetUserAccountThunk());
                                }
                                }
+                               onChange={()=>{}}
                                checked={recharge.isUserAccountChecked}/>
-                        <label className="form-check-label" for="materialUnchecked">
+                        <label className="form-check-label" htmlFor="materialUnchecked">
                             Tài khoản
                         </label>
                     </div>
@@ -43,13 +44,14 @@ export function Recharge(props) {
                         <input className="form-check-input" type="radio"
                                id="materialChecked" name="materialExampleRadios"
                                disabled={recharge.isSubmit}
+                               onChange={()=>{}}
                                onClick={() => {
                                    dispatch(updateValue({value: false, option: ["isUserAccountChecked"]}));
                                    dispatch(doGetNumberAccountThunk());
                                }}
                                checked={!recharge.isUserAccountChecked}
                         />
-                        <label className="form-check-label" for="materialChecked">
+                        <label className="form-check-label" htmlFor="materialChecked">
                             Số tài khoản
                         </label>
                     </div>
@@ -73,6 +75,7 @@ export function Recharge(props) {
 
 
                                }}
+                               value={""}
                         />
                     </div>
 
@@ -94,6 +97,7 @@ export function Recharge(props) {
 
 
                                }}
+                               value={""}
                         />
                     </div>
 
@@ -135,7 +139,7 @@ export function Recharge(props) {
 
                     <input
                         hidden={recharge.isSubmit}
-                        style={{"margin-left": "20px"}}
+                        style={{"marginLeft": "20px"}}
                         type="button"
                         className="btn btn-primary"
                         onClick={() => {

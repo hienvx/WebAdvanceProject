@@ -1,7 +1,6 @@
 let DB = require("../scripts/db");
 let express = require("express");
 let router = express.Router();
-const moment = require("moment");
 
 router.post("/", async function (req, res, next) {
     /*let date = moment();
