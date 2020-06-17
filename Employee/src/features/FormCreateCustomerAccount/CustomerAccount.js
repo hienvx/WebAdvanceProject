@@ -3,12 +3,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     customerModel,
     resetValue,
-    submit,
-    updateEmail,
-    updateFullName,
-    updatePhone,
-    updateUserName
+    updateValue, doSignUpThunk
 } from "./CustomerAccountSlice";
+import {doLoginThunk} from "../Login/LoginSlice";
 
 
 export function CreateCustomerAccount(props) {
@@ -28,10 +25,21 @@ export function CreateCustomerAccount(props) {
                         <input readOnly={customer.isSubmit}
                                type="text"
                                className="form-control"
-                               onChange={e => dispatch(updateUserName(e.target.value))}
+                               onChange={e => dispatch(updateValue({value: e.target.value, option:["userName"]}))}
                                value={customer.userName}
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label>Số dư</label>
+                        <input readOnly={customer.isSubmit}
+                               type="text"
+                               className="form-control"
+                               onChange={e => dispatch(updateValue({value: e.target.value, option:["currentBalance"]}))}
+                               value={customer.paymentAccount.currentBalance}
+                        />
+                    </div>
+
                     <div className="form-group" hidden={!customer.isSubmit}>
                         <label>Mật khẩu</label>
                         <input readOnly={customer.isSubmit}
@@ -53,7 +61,7 @@ export function CreateCustomerAccount(props) {
                                type="text"
                                className="form-control"
                                onChange={e => {
-                                   dispatch(updateFullName(e.target.value));
+                                   dispatch(updateValue({value: e.target.value, option:["fullName"]}));
                                }}
                                value={customer.fullName}
                         />
@@ -64,7 +72,7 @@ export function CreateCustomerAccount(props) {
                         <input readOnly={customer.isSubmit} required
                                type="email"
                                className="form-control"
-                               onChange={e => dispatch(updateEmail(e.target.value))}
+                               onChange={e => dispatch(updateValue({value: e.target.value, option:["email"]}))}
                                value={customer.email}
 
                         />
@@ -75,22 +83,23 @@ export function CreateCustomerAccount(props) {
                         <input readOnly={customer.isSubmit} required
                                type="phone"
                                className="form-control"
-                               onChange={e => dispatch(updatePhone(e.target.value))}
+                               onChange={e => dispatch(updateValue({value: e.target.value, option:["phone"]}))}
                                value={customer.phone}
                         />
                     </div>
 
-                    <input hidden={customer.isSubmit}
-                           type="button"
-                           className="btn btn-primary"
-                           onClick={() => {
-                               dispatch(submit(true));
-                           }} value={"Đăng ký"}
+                    <button hidden={customer.isSubmit}  type="button" className="btn btn-primary" onClick={async () => {
+                        dispatch(doSignUpThunk());
+                    }}>
+                        <span hidden={customer.isLoading}>Đăng ký</span>
+                        <span hidden={!customer.isLoading} className="spinner-border text-dark">
+                            </span>
+                    </button>
 
-                    />
 
                     <input hidden={!customer.isSubmit} type="button" className="btn btn-primary" onClick={() => {
-                        dispatch(submit(false));
+
+                        dispatch(updateValue({value: false, option:["isSubmit"]}));
                     }} value={"Quay về"}/>
 
                     <input style={{"margin-left": "20px"}}
@@ -101,10 +110,7 @@ export function CreateCustomerAccount(props) {
                                dispatch(resetValue());
                            }} value={"Xoá"}/>
 
-                    <label hidden={!customer.isSubmit} style={{"color": "green", "margin-left": "50px"}}>Sign up
-                        successful</label>
-                    <label hidden={!customer.isSubmit} style={{"color": "red", "margin-left": "50px"}}>Sign up
-                        failed</label>
+                    <label hidden={!customer.isSubmit} style={{"color": "red", "margin-left": "50px"}}>{customer.message}</label>
                 </form>
 
             </div>

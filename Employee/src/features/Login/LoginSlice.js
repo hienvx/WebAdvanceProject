@@ -1,12 +1,12 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {SignUp} from "../Authentication";
+import {SignIn} from "../Authentication";
 
 export const doLoginThunk = createAsyncThunk(
     'doLoginThunk',
     async (data, thunkAPI) => {
         thunkAPI.dispatch(updateValue({value: true, option: ["isLoading"]}));
         thunkAPI.dispatch(updateValue({value: "", option: ["message"]}));
-        const response = await SignUp(thunkAPI.getState().loginSlice);
+        const response = await SignIn(thunkAPI.getState().loginSlice);
         thunkAPI.dispatch(updateValue({value: response, option: ["message"]}));
         thunkAPI.dispatch(updateValue({value: false, option: ["isLoading"]}));
         return response;

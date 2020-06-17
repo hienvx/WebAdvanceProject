@@ -33,7 +33,7 @@ export async function Logout() {
         });
 }
 
-export async function SignUp(state) {
+export async function SignIn(state) {
 
     return await axios.post("http://localhost:3000/accounts/Auth/loginEmployee", {
         account: state.userName,
@@ -48,5 +48,30 @@ export async function SignUp(state) {
             } else {
                 return response.data.message;
             }
+        });
+}
+
+export async function SignUp(state) {
+
+    return await axios.post("http://localhost:3000/customers",
+        {
+            account: state.userName,
+            pass: state.password,
+            profile:
+                {
+                    fullName: state.fullName,
+                    email: state.email,
+                    phone: state.phone
+                },
+            paymentAccount: {
+                currentBalance: state.paymentAccount.currentBalance
+            },
+            savingAccount: state.savingAccount
+        })
+        .then(function (response) {
+            // handle success
+            return response.data;
+        }).catch(()=>{
+            return {"status": false, "message": "An error occurred"};
         });
 }
