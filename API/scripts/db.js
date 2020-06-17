@@ -1,5 +1,5 @@
 let MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+
 let url = "mongodb+srv://admin:P@ssw0rd@db-internet-banking-hoydq.gcp.mongodb.net";
 
 let dbName = 'DB'
@@ -9,7 +9,8 @@ const Insert = async function (collectionName, data) {
 
     if (!db) {
         return false;
-    };
+    }
+    ;
 
     console.log('Connection established server');
     let client = db.db(dbName);
@@ -22,11 +23,14 @@ const Insert = async function (collectionName, data) {
 };
 
 const Update = async function (collectionName, data, condition) {
-    let db = await MongoClient.connect(url).catch(err => { console.log(err); });
+    let db = await MongoClient.connect(url).catch(err => {
+        console.log(err);
+    });
 
     if (!db) {
         return false;
-    };
+    }
+    ;
 
     console.log('Connection established to server');
     let client = db.db(dbName);
@@ -44,7 +48,8 @@ const Delete = async function (collectionName, condition) {
 
     if (!db) {
         return;
-    };
+    }
+    ;
 
     console.log('Connection established to server');
     let client = db.db(dbName);
@@ -56,18 +61,20 @@ const Delete = async function (collectionName, condition) {
     return status.result.ok > 0;
 };
 
-const Find = async function (collectionName, condition = {}, sort = {}, limit = 0) {
-    let db = await MongoClient.connect(url).catch(err => { console.log(err); });
+const Find = async function (collectionName, condition = {}, sort = {}, limit = 0, skip = 0) {
+    let db = await MongoClient.connect(url).catch(err => {
+        console.log(err);
+    });
 
     if (!db) {
-        return;
-    };
+        return [];
+    }
+    ;
 
     console.log('Connection established to server');
     let client = db.db(dbName);
     let collection = client.collection(collectionName);
-    let data = await collection.find(condition).sort(sort).limit(limit).toArray();
-
+    let data = await collection.find(condition).sort(sort).limit(limit).skip(skip).toArray();
     await db.close();
     console.log("Closed connection to server");
     return data;
