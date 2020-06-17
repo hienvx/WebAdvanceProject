@@ -11,9 +11,11 @@ router.post("/", function (req, res, next) {
 });
 const AuthMiddleWare = require("../scripts/AuthMiddleware");
 const AuthController = require("../scripts/AuthController");
+const AuthEmployeeController = require("../scripts/AuthEmployeeController");
 
 router.post("/Auth/isAuth", AuthMiddleWare.isAuth);
 router.post("/Auth/login", AuthController.login);
+router.post("/Auth/loginEmployee", AuthEmployeeController.login);
 router.post("/Auth/logout", AuthController.logout);
 /*router.use(AuthMiddleWare.isAuth);*/
 router.post("/Auth/refresh-token", AuthController.refreshToken);
@@ -48,6 +50,7 @@ router.post("/payment/Account", securityPayment, async function (
    *   "account": "", // tài khoản cần nạp
    *   "amount" : "", //số tiền nạp
    *   "employeeAccount": "" // tài khoản nhân viên nạp
+   *   "bank":"" // Ngân hàng nạp
    * }
    * */
 
@@ -58,7 +61,7 @@ router.post("/payment/Account", securityPayment, async function (
   let account = req.body.data.account;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
-
+  let bank = req.body.data.bank;
   let customers = await DB.Find("customers", { account: account });
 
   if (customers.length == 0) {
@@ -82,14 +85,13 @@ router.post("/payment/Account", securityPayment, async function (
   if (status) {
     let log = {
       account: customer.account,
-      content: {
-        amount: amount,
-        OperationType: "NAP",
-        performer: {
-          type: "employee",
-          account: employeeAccount,
-        },
+      amount: amount,
+      type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      performer: {
+        type: "employee",
+        account: employeeAccount,
       },
+      bank:bank,
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
@@ -109,6 +111,7 @@ router.post("/payment/NumberAccount", securityPayment, async function (
    *   "numberAccount": "", // số tài khoản cần nạp
    *   "amount" : "", //số tiền nạp
    *   "employeeAccount": "" // tài khoản nhân viên nạp
+   *   "bank": "" // ngân hàng nạp
    * }
    * */
 
@@ -119,6 +122,7 @@ router.post("/payment/NumberAccount", securityPayment, async function (
   let numberAccount = req.body.data.numberAccount;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
+  let bank = req.body.data.bank || "KAT";
 
   let customers = await DB.Find("customers", {
     "paymentAccount.numberAccount": numberAccount,
@@ -148,14 +152,13 @@ router.post("/payment/NumberAccount", securityPayment, async function (
   if (status) {
     let log = {
       account: account,
-      content: {
-        amount: amount,
-        OperationType: "NAP",
-        performer: {
-          type: "employee",
-          account: employeeAccount,
-        },
+      amount: amount,
+      type: 1 ,// "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      performer: {
+        type: "employee",
+        account: employeeAccount,
       },
+      bank: bank,
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);

@@ -41,7 +41,7 @@ export function History(props) {
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
-                History transaction
+                Lịch sử giao dich
             </div>
             <div className="card-body">
                 <form action="#">
@@ -55,7 +55,7 @@ export function History(props) {
                                }}
                                checked={history.isUserAccountChecked}/>
                         <label className="form-check-label" htmlFor="materialUnchecked1">
-                            User account
+                            Tài khoản
                         </label>
                     </div>
 
@@ -68,12 +68,12 @@ export function History(props) {
                                id="materialChecked1" name="materialExampleRadios1"
                                checked={!history.isUserAccountChecked}/>
                         <label className="form-check-label" htmlFor="materialChecked1">
-                            Number account
+                            Số tài khoản
                         </label>
                     </div>
 
                     <div hidden={history.isUserAccountChecked}>
-                        <h5 className="page-header">Transaction type</h5>
+                        <h5 className="page-header">Loại giao dịch</h5>
 
                         <div className="col-3">
                             <select className="form-control" onChange={e => {
@@ -86,15 +86,16 @@ export function History(props) {
                             }}
                                     value={history.userAccountFilter.type}
                             >
-                                <option value="0">Receive</option>
-                                <option value="1">Transfers</option>
-                                <option value="2">Payment</option>
+                                <option value="0">Chuyển khoản</option>
+                                <option value="1">Nạp tiền</option>
+                                <option value="2">Rút tiền</option>
+                                <option value="3">Nhận tiền</option>
                             </select>
                         </div>
                     </div>
 
                     <div hidden={!history.isUserAccountChecked}>
-                        <h5 className="page-header">Transaction type</h5>
+                        <h5 className="page-header">Loại giao dịch</h5>
 
                         <div className="col-3">
                             <select className="form-control" onChange={e => {
@@ -106,9 +107,10 @@ export function History(props) {
                             }}
                                     value={history.numberAccountFilter.type}
                             >
-                                <option value="0">Receive</option>
-                                <option value="1">Transfers</option>
-                                <option value="2">Payment</option>
+                                <option value="0">Chuyển khoản</option>
+                                <option value="1">Nạp tiền</option>
+                                <option value="2">Rút tiền</option>
+                                <option value="3">Nhận tiền</option>
                             </select>
                         </div>
                     </div>
@@ -116,7 +118,7 @@ export function History(props) {
                     <br/>
 
                     <div className="form-group col-3" hidden={history.isUserAccountChecked}>
-                        <label>User account</label>
+                        <label>Tài khoản</label>
                         <input type="text" className="form-control"
 
                                onChange={e => {
@@ -133,7 +135,7 @@ export function History(props) {
                     </div>
 
                     <div className="form-group col-3" hidden={!history.isUserAccountChecked}>
-                        <label>Number account</label>
+                        <label>Số tài khoản</label>
                         <input type="text" className="form-control"
 
                                onChange={e => {
@@ -153,10 +155,10 @@ export function History(props) {
                         <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">User account</th>
-                            <th scope="col">Type transaction</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Time</th>
+                            <th scope="col">Tài khoản</th>
+                            <th scope="col">Loại giao dịch</th>
+                            <th scope="col">Số tiền</th>
+                            <th scope="col">Ngày</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -169,10 +171,10 @@ export function History(props) {
                         <thead>
                         <tr>
                             <th scope="col"></th>
-                            <th scope="col">Number account</th>
-                            <th scope="col">Type transaction</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Time</th>
+                            <th scope="col">Tài khoản</th>
+                            <th scope="col">Loại giao dịch</th>
+                            <th scope="col">Số tiền</th>
+                            <th scope="col">Ngày</th>
                         </tr>
                         </thead>
                         <tbody>

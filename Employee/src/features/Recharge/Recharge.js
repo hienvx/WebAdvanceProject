@@ -29,7 +29,7 @@ export function Recharge(props) {
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
-                Recharged account
+                Nạp tiền cho khách hàng
             </div>
             <div className="card-body ">
                 <form action="#">
@@ -41,7 +41,7 @@ export function Recharge(props) {
                                onClick={() => dispatch(updateSelected(true))}
                                checked={recharge.isUserAccountChecked}/>
                         <label className="form-check-label" for="materialUnchecked">
-                            User account
+                            Tài khoản
                         </label>
                     </div>
 
@@ -52,13 +52,13 @@ export function Recharge(props) {
                                checked={!recharge.isUserAccountChecked}
                         />
                         <label className="form-check-label" for="materialChecked">
-                            Number account
+                            Số tài khoản
                         </label>
                     </div>
 
                     <br/>
                     <div className="form-group" hidden={!recharge.isUserAccountChecked}>
-                        <label>User account</label>
+                        <label>Tài khoản</label>
                         <input type="text"
                                className="form-control"
                                readOnly={recharge.isSubmit}
@@ -70,7 +70,7 @@ export function Recharge(props) {
                     </div>
 
                     <div className="form-group" hidden={recharge.isUserAccountChecked}>
-                        <label>Number account</label>
+                        <label>Số tài khoản</label>
                         <input type="text"
                                className="form-control"
                                readOnly={recharge.isSubmit}
@@ -82,7 +82,7 @@ export function Recharge(props) {
                     </div>
 
                     <div className="form-group">
-                        <label>Amount</label>
+                        <label>Số tiền</label>
                         <input type="text" id={"inputAmount"}
                                className="form-control"
                                readOnly={recharge.isSubmit}
@@ -97,7 +97,7 @@ export function Recharge(props) {
 
                     <input hidden={recharge.isSubmit} type="button" className="btn btn-primary" onClick={() => {
                         dispatch(submit());
-                    }} value={"Submit"}>
+                    }} value={"Nạp tiền"}>
                     </input>
 
                     <input
@@ -106,7 +106,7 @@ export function Recharge(props) {
                         className="btn btn-primary"
                         onClick={() => {
                             dispatch(back());
-                        }} value={"Back"}/>
+                        }} value={"Quay về"}/>
 
                     <input
                         hidden={recharge.isSubmit}
@@ -115,7 +115,7 @@ export function Recharge(props) {
                         className="btn btn-primary"
                         onClick={() => {
                             dispatch(resetValue());
-                        }} value={"Clear"}/>
+                        }} value={"Xoá"}/>
 
                     <label hidden={!recharge.isSubmit} style={{"color": "green", "margin-left": "50px"}}>Recharge
                         successful</label>

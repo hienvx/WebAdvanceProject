@@ -19,12 +19,12 @@ export function CreateCustomerAccount(props) {
     return (
         <div className="card text-left" hidden={props.hidden}>
             <div className="card-header">
-                Sign up customer account
+                Tạo tài khoản khách hàng
             </div>
             <div className="card-body">
                 <form action="#">
                     <div className="form-group">
-                        <label>User name</label>
+                        <label>Tên đăng nhập</label>
                         <input readOnly={customer.isSubmit}
                                type="text"
                                className="form-control"
@@ -33,7 +33,7 @@ export function CreateCustomerAccount(props) {
                         />
                     </div>
                     <div className="form-group" hidden={!customer.isSubmit}>
-                        <label>Password</label>
+                        <label>Mật khẩu</label>
                         <input readOnly={customer.isSubmit}
                                type="text"
                                className="form-control"
@@ -45,10 +45,10 @@ export function CreateCustomerAccount(props) {
                         <label>Re-Password</label>
                         <input type="password" className="form-control"/>
                     </div>*/}
-                    <h3>Profile</h3>
+                    <h3>Thông tin cá nhân</h3>
 
                     <div className="form-group">
-                        <label>Full name</label>
+                        <label>Họ tên</label>
                         <input readOnly={customer.isSubmit} required
                                type="text"
                                className="form-control"
@@ -60,7 +60,7 @@ export function CreateCustomerAccount(props) {
                     </div>
 
                     <div className="form-group">
-                        <label>Email</label>
+                        <label>Địa chỉ email</label>
                         <input readOnly={customer.isSubmit} required
                                type="email"
                                className="form-control"
@@ -71,7 +71,7 @@ export function CreateCustomerAccount(props) {
                     </div>
 
                     <div className="form-group">
-                        <label>Phone</label>
+                        <label>Số điện thoại</label>
                         <input readOnly={customer.isSubmit} required
                                type="phone"
                                className="form-control"
@@ -85,13 +85,13 @@ export function CreateCustomerAccount(props) {
                            className="btn btn-primary"
                            onClick={() => {
                                dispatch(submit(true));
-                           }} value={"Submit"}
+                           }} value={"Đăng ký"}
 
                     />
 
                     <input hidden={!customer.isSubmit} type="button" className="btn btn-primary" onClick={() => {
                         dispatch(submit(false));
-                    }} value={"Back"}/>
+                    }} value={"Quay về"}/>
 
                     <input style={{"margin-left": "20px"}}
                            hidden={customer.isSubmit}
@@ -99,7 +99,7 @@ export function CreateCustomerAccount(props) {
                            className="btn btn-primary"
                            onClick={() => {
                                dispatch(resetValue());
-                           }} value={"Clear"}/>
+                           }} value={"Xoá"}/>
 
                     <label hidden={!customer.isSubmit} style={{"color": "green", "margin-left": "50px"}}>Sign up
                         successful</label>
