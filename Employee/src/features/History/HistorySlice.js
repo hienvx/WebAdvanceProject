@@ -1,83 +1,104 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+const axios = require('axios').default;
+
+export const doGetHistoryTransactionThunk = createAsyncThunk(
+    'doGetHistoryTransactionThunk',
+    async (data, thunkAPI) => {
+        thunkAPI.dispatch(updateValue({value: false, option: ["isStart"]}));
+        thunkAPI.dispatch(updateValue({value: true, option: ["isLoading"]}));
+
+        let dataUserAccount = await getHistoryTransaction(thunkAPI.getState().historySlice.userAccountFilter);
+
+        thunkAPI.dispatch(updateValue({value: dataUserAccount.results, option: ["dataUserAccount"]}));
+        thunkAPI.dispatch(updateValue({value: dataUserAccount.total, option: ["totalData"]}));
+        thunkAPI.dispatch(updateValue({value: false, option: ["isLoading"]}));
+
+    }
+);
+
+let getHistoryTransaction = function (state) {
+    return axios.post("http://localhost:3000/history",
+        {
+            condition: {
+                account: {'$regex': state.filter},
+                type: parseInt(state.type),
+            },
+            sort: {time: -1},
+            limit: state.limit,
+            skip: state.skip
+        }).then(result => {
+        return result.data;
+    }).catch(() => {
+        return [];
+    });
+};
 
 export const historySlice = createSlice({
     name: 'historySlice',
     initialState: {
-        isUserAccountChecked: true,
         dataUserAccount: [],
-        dataNumberAccount: [],
-        numberAccountFilter: {
-            filter: "",
-            type: "0"
-        },
         userAccountFilter: {
             filter: "",
-            type: "0"
-        }
+            type: "0",
+            limit: 10,
+            skip: 0
+        },
+        totalData: 0,
+        currentPage: 1,
+        totalPage: 0,
+        isStart: true,
+        isLoading: false,
 
     },
+    extraReducers: {
+        // Add reducers for additional action types here, and handle loading state as needed
+        [doGetHistoryTransactionThunk.fulfilled]: (state, action) => {
+            // Add user to the state array
+            /*state.entities.push(action.payload)*/
+        }
+    },
     reducers: {
-        updateSelected: (state, action) => {
-            state.isUserAccountChecked = action.payload;
-        },
-        searchUserAccount: (state, action) => {
+        updateValue: (state, action) => {
             if (action.payload.option.includes("type")) {
-
-                state.userAccountFilter.type = action.payload.query;
-
+                state.userAccountFilter.type = action.payload.value;
             }
 
             if (action.payload.option.includes("filter")) {
-                state.userAccountFilter.filter = action.payload.query;
+                state.userAccountFilter.filter = action.payload.value;
             }
 
-            state.dataUserAccount = [
-                {account: "1", type: 1, amount: "1000", time: "20/06/2020"},
-                {account: "2", type: 2, amount: "7000", time: "21/04/2020"},
-                {account: "3", type: 0, amount: "5000", time: "25/01/2020"},
-                {account: "1", type: 2, amount: "4000", time: "27/08/2020"},
-                {account: "2", type: 2, amount: "2000", time: "23/05/2020"},
-                {account: "3", type: 0, amount: "3000", time: "23/07/2020"},
-                {account: "2", type: 1, amount: "1000", time: "20/06/2020"},
-                {account: "2", type: 1, amount: "7000", time: "21/04/2020"},
-                {account: "1", type: 0, amount: "5000", time: "25/01/2020"},
-                {account: "2", type: 1, amount: "4000", time: "27/08/2020"},
-                {account: "1", type: 2, amount: "2000", time: "23/05/2020"},
-                {account: "3", type: 0, amount: "3000", time: "23/07/2020"}
-            ];
-            state.dataUserAccount = state.dataUserAccount.filter(item => item.account == state.userAccountFilter.filter && item.type == state.userAccountFilter.type);
-
-
-        },
-
-        searchNumberAccount: (state, action) => {
-            if (action.payload.option.includes("type")) {
-                state.numberAccountFilter.type = action.payload.query;
+            if (action.payload.option.includes("isStart")) {
+                state.isStart = action.payload.value;
             }
 
-            if (action.payload.option.includes("filter")) {
-                state.numberAccountFilter.filter = action.payload.query;
+            if (action.payload.option.includes("isLoading")) {
+                state.isLoading = action.payload.value;
             }
 
-            state.dataNumberAccount = [
-                {account: "1", type: 1, amount: "1000", time: "20/06/2020"},
-                {account: "2", type: 2, amount: "7000", time: "21/04/2020"},
-                {account: "3", type: 0, amount: "5000", time: "25/01/2020"},
-                {account: "1", type: 2, amount: "4000", time: "27/08/2020"},
-                {account: "2", type: 2, amount: "2000", time: "23/05/2020"},
-                {account: "3", type: 0, amount: "3000", time: "23/07/2020"},
-                {account: "2", type: 1, amount: "1000", time: "20/06/2020"},
-                {account: "2", type: 1, amount: "7000", time: "21/04/2020"},
-                {account: "1", type: 0, amount: "5000", time: "25/01/2020"},
-                {account: "2", type: 1, amount: "4000", time: "27/08/2020"},
-                {account: "1", type: 2, amount: "2000", time: "23/05/2020"},
-                {account: "3", type: 0, amount: "3000", time: "23/07/2020"}
-            ];
-            state.dataNumberAccount = state.dataNumberAccount.filter(item => item.account == state.numberAccountFilter.filter && item.type == state.numberAccountFilter.type);
+            if (action.payload.option.includes("dataUserAccount")) {
+                state.dataUserAccount = action.payload.value;
+            }
 
+            if (action.payload.option.includes("skip")) {
+                state.userAccountFilter.skip = action.payload.query;
+                state.currentPage = Math.ceil(state.userAccountFilter.skip / state.userAccountFilter.limit);
+            }
+
+            if (action.payload.option.includes("totalData")) {
+                state.totalData = action.payload.value;
+                state.totalPage = Math.ceil(state.totalData / state.userAccountFilter.limit);
+            }
+
+            if (action.payload.option.includes("currentPage")) {
+                if (action.payload.value > 0 && action.payload.value <= state.totalPage) {
+                    state.currentPage = action.payload.value;
+                    state.userAccountFilter.skip = state.userAccountFilter.limit * (state.currentPage - 1);
+                }
+
+            }
         },
     },
 });
 export const historyModel = state => state.historySlice;
-export const {updateSelected, searchNumberAccount, searchUserAccount} = historySlice.actions;
+export const {updateValue} = historySlice.actions;
 export default historySlice.reducer;

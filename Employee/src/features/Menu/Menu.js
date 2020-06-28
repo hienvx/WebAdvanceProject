@@ -4,12 +4,17 @@ import {CreateCustomerAccount} from "../FormCreateCustomerAccount/CustomerAccoun
 import {History} from "../History/History";
 import {Recharge} from "../Recharge/Recharge";
 import {useDispatch, useSelector} from "react-redux";
-import {menuModel, selectCategory} from "./MenuSlice";
+import {menuModel, selectCategory, doLogoutThunk, doCheckLoginThunk} from "./MenuSlice";
+
 
 
 export function Menu() {
     const dispatch = useDispatch();
     const menu = useSelector(menuModel);
+    if (menu.isLogin == false) {
+        dispatch(doCheckLoginThunk())
+    }
+
     return (
         <div className="wrapper d-flex align-items-stretch">
             <nav id="sidebar">
@@ -19,19 +24,19 @@ export function Menu() {
                         <li className={menu.categorySelected == 0 ? "active" : null}>
                             <a onClick={() => {
                                 dispatch(selectCategory(0))
-                            }}>Create customer account</a>
+                            }}>Tạo tài khoản khách hàng</a>
                         </li>
 
                         <li className={menu.categorySelected == 1 ? "active" : null}>
                             <a onClick={() => {
                                 dispatch(selectCategory(1))
-                            }}>Recharged account</a>
+                            }}>Nạp tiền cho khách hàng</a>
                         </li>
 
                         <li className={menu.categorySelected == 2 ? "active" : null}>
                             <a onClick={() => {
                                 dispatch(selectCategory(2))
-                            }}>History transaction</a>
+                            }}>Lịch sử giao dịch</a>
                         </li>
 
                     </ul>
@@ -68,6 +73,13 @@ export function Menu() {
                         </button>*/}
 
                         <h3>Internet banking</h3>
+
+                        <button type="button" className="btn btn-primary" onClick={() => {
+                            dispatch(doLogoutThunk());
+                        }}>
+                            Đăng xuất
+                        </button>
+
                     </div>
                 </nav>
 
