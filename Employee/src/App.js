@@ -1,19 +1,34 @@
 import React from 'react';
 import './App.css';
-/*import {Recharge} from "./features/Recharge/Recharge";*/
-import {History} from "./features/History/History";
-import {Menu} from "./features/Menu/Menu";
 
-/*import {CreateCustomerAccount} from "./features/FormCreateCustomerAccount/CustomerAccount";*/
+import {Menu} from "./features/Menu/Menu";
+import {Login} from "./features/Login/Login";
+
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from "react-router-dom";
 
 
 function App() {
     return (
         <div className="App">
-            {/* <CreateCustomerAccount/>*/}
-            {/*<Recharge/>*/}
-            {/* <History/>*/}
-            <Menu/>
+            <Router>
+                <div>
+                    <Switch>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/home">
+                            <Menu />
+                        </Route>
+                        <Route path="/">
+                            <Menu />
+                        </Route>
+                    </Switch>
+                </div>
+            </Router>
         </div>
     );
 }

@@ -1,10 +1,8 @@
+const bcrypt = require('bcrypt');
 const db = require("./db");
 const jwtHelper = require("./jwt.helper");
 const AssociatedBank = require("../secrets/associated-bank.json");
 let code = "KAT";
-
-// Biến cục bộ trên server này sẽ lưu trữ tạm danh sách token
-let tokenList = {};
 
 // Thời gian sống của access-token
 const accessTokenLife = "1h";
@@ -22,78 +20,110 @@ const refreshTokenSecret = AssociatedBank[code].secretKey;
  * @param {*} res
  */
 let login = async (req, res) => {
-    try {
-        // Mình sẽ comment mô tả lại một số bước khi làm thực tế cho các bạn như sau nhé:
-        // - Đầu tiên Kiểm tra xem email người dùng đã tồn tại trong hệ thống hay chưa?
-        // - Nếu chưa tồn tại thì reject: User not found.
-        // - Nếu tồn tại user thì sẽ lấy password mà user truyền lên, băm ra và so sánh với mật khẩu của user lưu trong Database
-        // - Nếu password sai thì reject: Password is incorrect.
-        // - Nếu password đúng thì chúng ta bắt đầu thực hiện tạo mã JWT và gửi về cho người dùng.
-        // Trong ví dụ demo này mình sẽ coi như tất cả các bước xác thực ở trên đều ok, mình chỉ xử lý phần JWT trở về sau thôi nhé:
+        try {
+            const userData = {
+                account: req.body.account,
+            };
 
-        const userData = {
-            account: "nhutthanh341"
-        };
+            const userLogin = await db.Find("administrators", {account: userData.account});
+            if (userLogin.length > 0) {
+                let hash = userLogin[0].pass;
+                let loginSuccess = bcrypt.compareSync(req.body.password, hash); // true
+                if (!loginSuccess) {
+                    return res.status(200).json({"message": "Password Incorrect", status: false});
+                }
+            } else {
+                return res.status(200).json({"message": "User invalid", status: false});
+            }
 
-        const accessToken = await jwtHelper.generateToken(userData, accessTokenSecret, accessTokenLife);
+            const accessToken = await
+                jwtHelper.generateToken(userData, accessTokenSecret, accessTokenLife);
 
-        const refreshToken = await jwtHelper.generateToken(userData, refreshTokenSecret, refreshTokenLife);
-        const isUserHadToken = await db.Find("tokens", {account: userData.account});
-        if (isUserHadToken.length == 0) {
-            await db.Insert("tokens", [{account: userData.account, accessToken, refreshToken}]);
-        } else {
-            await db.Update("tokens", {accessToken, refreshToken}, {account: userData.account});
+            const refreshToken = await
+                jwtHelper.generateToken(userData, refreshTokenSecret, refreshTokenLife);
+            const isUserHadToken = await
+                db.Find("tokens", {account: userData.account});
+            if (isUserHadToken.length == 0) {
+                await
+                    db.Insert("tokens", [{account: userData.account, accessToken, refreshToken}]);
+            } else {
+                await
+                    db.Update("tokens", {accessToken, refreshToken}, {account: userData.account});
+            }
+
+            return res.status(200).json({accessToken, refreshToken, status: true});
+        } catch (error) {
+            return res.status(500).json({error, status: false});
         }
-
-        // Lưu lại refresh-token và access-token tại server
-        tokenList[refreshToken] = {accessToken, refreshToken};
-
-        return res.status(200).json({accessToken, refreshToken});
-    } catch (error) {
-        return res.status(500).json(error);
     }
-};
+;
+/**
+ * controller logout
+ * @param {*} req
+ * @param {*} res
+ */
+let logout = async (req, res) => {
+        try {
 
+            const tokenFromClient = req.body.token || req.query.token || req.headers["x-access-token"];
+            console.log(tokenFromClient);
+            const decoded = await jwtHelper.verifyToken(tokenFromClient, accessTokenSecret);
+
+            await db.Delete("tokens", {account: decoded.data.account});
+
+            return res.status(200).json({"message": "User logged", "status": true});
+        } catch (error) {
+            return res.status(500).json({error, "status": false});
+        }
+    }
+;
 /**
  * controller refreshToken
  * @param {*} req
  * @param {*} res
  */
 let refreshToken = async (req, res) => {
-    // User gửi mã refresh token kèm theo trong body
-    const refreshTokenFromClient = req.body.refreshToken;
-    const refreshTokensFromServer = await db.Find("tokens", {refreshToken:refreshTokenFromClient});
-    if(refreshTokensFromServer.length == 0){
-        return res.status(403).send({
-            message: 'No token from server.',
-        });
-    }
-    // Nếu như tồn tại refreshToken truyền lên và nó cũng nằm trong tokenList
-    if (refreshTokenFromClient && refreshTokensFromServer[0]) {
-        try {
-            // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded
-            const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
-
-            // Thông tin user lúc này các bạn có thể lấy thông qua biến decoded.data
-            const userFakeData = decoded.data;
-            const accessToken = await jwtHelper.generateToken(userFakeData, accessTokenSecret, accessTokenLife);
-            await db.Update("tokens", {accessToken}, {refreshToken:refreshTokenFromClient});
-            // gửi token mới về cho người dùng
-            return res.status(200).json({accessToken});
-        } catch (error) {
-            res.status(403).json({
-                message: 'Invalid refresh token.',
+        // User gửi mã refresh token kèm theo trong body
+        const refreshTokenFromClient = req.body.refreshToken;
+        const refreshTokensFromServer = await
+            db.Find("tokens", {refreshToken: refreshTokenFromClient});
+        if (refreshTokensFromServer.length == 0) {
+            return res.status(403).send({
+                message: 'No token from server.',
             });
         }
-    } else {
-        // Không tìm thấy token trong request
-        return res.status(403).send({
-            message: 'No token provided.',
-        });
+        // Nếu như tồn tại refreshToken truyền lên và nó cũng nằm trong tokenList
+        if (refreshTokenFromClient && refreshTokensFromServer[0]) {
+            try {
+                // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded
+                const decoded = await
+                    jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
+
+                // Thông tin user lúc này các bạn có thể lấy thông qua biến decoded.data
+                const userData = decoded.data;
+                const accessToken = await
+                    jwtHelper.generateToken(userData, accessTokenSecret, accessTokenLife);
+                await
+                    db.Update("tokens", {accessToken}, {refreshToken: refreshTokenFromClient});
+                // gửi token mới về cho người dùng
+                return res.status(200).json({accessToken});
+            } catch (error) {
+                res.status(403).json({
+                    message: 'Invalid refresh token.',
+                });
+            }
+        } else {
+            // Không tìm thấy token trong request
+            return res.status(403).send({
+                message: 'No token provided.',
+            });
+        }
     }
-};
+;
+
 
 module.exports = {
     login: login,
     refreshToken: refreshToken,
-}
+    logout: logout
+};
