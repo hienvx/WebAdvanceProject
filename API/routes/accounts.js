@@ -2,21 +2,22 @@ let express = require("express");
 let router = express.Router();
 let DB = require("../scripts/db");
 const moment = require("moment");
-let { security } = require("./securityAPI");
-let { securityPayment } = require("./securityAPIPayment");
-/* GET users listing. */
+let securityPolicy = require("../policies/securityPolicy");
+let securityPayment = require("../policies/securityPaymentPolicy");
 
+/* GET users listing. */
 router.post("/", function (req, res, next) {
   res.send("Test api");
 });
-const AuthMiddleWare = require("../scripts/AuthMiddleware");
-const AuthController = require("../scripts/AuthController");
+const AuthMiddleWare = require("../middlewares/AuthMiddleware");
+const AuthController = require("../controllers/AuthController");
 
 router.post("/Auth/login", AuthController.login);
+router.post("/Auth/register", AuthController.register);
 router.post("/Auth/refresh-token", AuthController.refreshToken);
 router.use(AuthMiddleWare.isAuth);
 
-router.get("/:id", security, async function (req, res, next) {
+router.get("/:id", securityPolicy, async function (req, res, next) {
   let account = req.params.id;
   let customers = await DB.Find("customers", { account: account });
 

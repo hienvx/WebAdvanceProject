@@ -18,13 +18,10 @@ fs.readFile(
   }
 );
 
-/** Body Example
+/** Header Example
  * {
  *      "name_bank": "KiantoBank", // Partner name (Ten ngan hang)
  *      "code": "KAT", // Partner code
- *      "data": {
- *        // req.body.data
- *      },
  *      "requestTime": 1589940146, // Thoi gian con song cua package. Mac dinh 10s
  *      "signature": "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ" // Ma hoa SHA256(body.json + requestTime + secretkey)
  *      "pgp_sig": "-----BEGIN PGP SIGNED MESSAGE-----...-----END PGP SIGNATURE-----" // Chu ky ma ben B ky bang privateKey(PGP) cua ho
@@ -32,11 +29,11 @@ fs.readFile(
  */
 
 const securityPayment = async function (req, res, next) {
-  const code = req.body.code;
-  const name_bank = req.body.name_bank;
-  const requestTime = req.body.requestTime;
-  const signature = req.body.signature;
-  const pgp_sig = req.body.pgp_sig;
+  const code = req.headers.code;
+  const name_bank = req.headers.name_bank;
+  const requestTime = req.headers["request-time"];
+  const signature = req.headers.signature;
+  const pgp_sig = req.body.data.pgp_sig;
 
   // Check bank have been added in list
   if (!AssociatedBank[code] || AssociatedBank[code].name !== name_bank)
@@ -88,4 +85,4 @@ const securityPayment = async function (req, res, next) {
 
   return next();
 };
-module.exports = { securityPayment };
+module.exports = securityPayment;

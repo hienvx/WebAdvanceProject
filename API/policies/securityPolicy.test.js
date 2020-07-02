@@ -1,4 +1,3 @@
-const security = require("./securityAPI");
 const axios = require("axios");
 const SHA256 = require("crypto-js/sha256");
 const AssociatedBank = require("../secrets/associated-bank.json");
@@ -27,20 +26,29 @@ describe("security", () => {
    * second param is callback arrow function
    */
   it("It should return status 200 when request is correct", async () => {
-    const data = {
+    const headers = {
       name_bank: "Kianto Bank",
       code: "KAT",
-      data: {},
-      requestTime: Date.now(),
+      "request-time": "" + Date.now(),
     };
 
     await client
-      .post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
+      .post(
+        "/test-security-api",
+        {
+          data: {},
+        },
+        {
+          headers: {
+            ...headers,
+            signature: SHA256(
+              headers +
+                headers["request-time"] +
+                AssociatedBank[headers.code].secretKey
+            ).toString(),
+          },
+        }
+      )
       .then((res) => {
         expect(res.status).toEqual(200);
       })
@@ -50,39 +58,55 @@ describe("security", () => {
   });
 
   it("It should return 403 when the bank have not assigned before", async () => {
-    const data = {
+    const headers = {
       name_bank: "Kianto Bank wrong",
       code: "KAT",
-      data: {},
-      requestTime: Date.now(),
+      "request-time": Date.now(),
     };
     await expect(
-      client.post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
+      client.post(
+        "/test-security-api",
+        {
+          data: {},
+        },
+        {
+          headers: {
+            ...headers,
+            signature: SHA256(
+              headers +
+                headers["request-time"] +
+                AssociatedBank[headers.code].secretKey
+            ).toString(),
+          },
+        }
+      )
     ).rejects.toThrow(new Error("Request failed with status code 403"));
   });
 
   it("It should return 403 when the signature is wrong", async () => {
-    const data = {
+    const headers = {
       name_bank: "Kianto Bank",
       code: "KAT",
-      data: {},
-      requestTime: Date.now(),
+      "request-time": Date.now(),
     };
     await expect(
-      client.post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data +
-            data.requestTime +
-            AssociatedBank[data.code].secretKey +
-            "wrong"
-        ).toString(),
-      })
+      client.post(
+        "/test-security-api",
+        {
+          data: {},
+        },
+        {
+          headers: {
+            ...headers,
+            signature: SHA256(
+              headers +
+                headers["request-time"] +
+                AssociatedBank[headers.code].secretKey +
+                "wrong"
+            ).toString(),
+          },
+        }
+      )
     ).rejects.toThrow(new Error("Request failed with status code 403"));
   });
 });
