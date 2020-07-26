@@ -3,6 +3,7 @@ import $ from "jquery";
 import { CreateCustomerAccount } from "../FormCreateCustomerAccount/CustomerAccount";
 import { History } from "../History/History";
 import { Recharge } from "../Recharge/Recharge";
+import { InternalBankTransfer } from "../InternalBankTransfer/InternalBankTransfer";
 import { useDispatch, useSelector } from "react-redux";
 import {
   menuModel,
@@ -49,17 +50,17 @@ export function Menu() {
                   dispatch(selectCategory(2));
                 }}
               >
-                Chuyển khoản
+                Chuyển khoản nội bộ
               </a>
             </li>
 
             <li className={menu.categorySelected === 3 ? "active" : null}>
               <a
                 onClick={() => {
-                  dispatch(selectCategory(3));
+                //   dispatch(selectCategory(3));
                 }}
               >
-                Quản lý nhắc nợ
+                Chuyển khoản liên ngân hàng
               </a>
             </li>
           </ul>
@@ -113,7 +114,8 @@ export function Menu() {
 
         <CreateCustomerAccount hidden={menu.categorySelected !== 0} />
         <Recharge hidden={menu.categorySelected !== 1} />
-        <History hidden={menu.categorySelected !== 2} />
+        <InternalBankTransfer hidden={menu.categorySelected !== 2} />
+        {/* <InterBankTransfer hidden={menu.categorySelected !== 3} /> */}
       </div>
     </div>
   );

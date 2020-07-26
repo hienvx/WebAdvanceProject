@@ -11,7 +11,7 @@ const historyTransactionRouter = require("./routes/historyTransaction");
 const banksConnectedRouter = require('./routes/banksConnected');
 const employeesRouter = require('./routes/employees');
 const customersRouter = require('./routes/customers');
-const demoReactjs = require("./routes/demoReactjs");
+const transferRouter = require("./routes/transfer");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
 
@@ -35,7 +35,7 @@ app.use('/banks', banksConnectedRouter);
 app.use('/employees', employeesRouter);
 app.use('/customers', customersRouter);
 // app.use("/accounts", accountsRouter);
-app.use("/demo", demoReactjs);
+app.use("/transfer", transferRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -4,6 +4,7 @@ import customerAccount from "../features/FormCreateCustomerAccount/CustomerAccou
 import historySlice from "../features/History/HistorySlice";
 import rechargeSlice from "../features/Recharge/RechargeSlice";
 import loginSlice from "../features/Login/LoginSlice";
+import internalBankTransferSlice from "../features/InternalBankTransfer/InternalBankTransferSlice";
 
 export default configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export default configureStore({
     customerAccount: customerAccount,
     historySlice: historySlice,
     rechargeSlice: rechargeSlice,
-    loginSlice: loginSlice,
+	loginSlice: loginSlice,
+	internalBankTransferSlice: internalBankTransferSlice,
   },
 });
