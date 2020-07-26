@@ -31,6 +31,7 @@
     "gpg": "^0.6.0",
     "hbs": "^4.1.1",
     "http-errors": "^1.7.3",
+    "isomorphic-fetch": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "jsx": "^0.9.89",
     "moment": "^2.25.3",
