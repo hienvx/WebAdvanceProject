@@ -8,6 +8,9 @@ const bcrypt = require("bcrypt");
 const db = require("../scripts/db");
 const jwtHelper = require("../scripts/jwt.helper");
 const AssociatedBank = require("../secrets/associated-bank.json");
+
+const AuthMiddleWare = require("../scripts/AuthMiddleware");
+
 let code = "KAT";
 
 // Thời gian sống của access-token
@@ -106,7 +109,7 @@ let hashCode = function (str) {
   return hash;
 };
 
-router.post("/signup", async function (req, res, next) {
+router.post("/", async function (req, res, next) {
   let isExistUser = await DB.Find("customers", { account: req.body.account });
   if (isExistUser.length > 0) {
     res.json({ status: false, message: "Account is used" });
@@ -138,5 +141,65 @@ router.post("/signup", async function (req, res, next) {
 });
 
 router.post("/login", login);
+
+router.get("/getUserDetail", async (req, res, next) => {
+  // Lấy token được gửi lên từ phía client
+  const tokenFromClient =
+    req.body.token || req.query.token || req.headers["x-access-token"];
+
+  if (tokenFromClient) {
+    // Nếu tồn tại token
+    try {
+      // Thực hiện giải mã token xem có hợp lệ hay không?
+      const decoded = await jwtHelper.verifyToken(
+        tokenFromClient,
+        accessTokenSecret
+      );
+
+      const userLogin = await db.Find("tokens", {
+        account: decoded.data.account,
+      });
+      if (userLogin.length > 0) {
+        if (tokenFromClient === userLogin[0].accessToken) {
+          const userDetail = await db.Find("customers", {
+            account: decoded.data.account,
+          });
+          return res.json({
+            profile: userDetail[0].profile,
+            paymentAccount: userDetail[0].paymentAccount,
+            savingAccount: userDetail[0].savingAccount,
+          });
+        } else {
+          return res.status(200).json({
+            message: "Token invalid",
+            status: false,
+          });
+        }
+      } else {
+        return res.status(200).json({
+          message: "User invalid",
+          status: false,
+        });
+      }
+      /*            // Nếu token hợp lệ, lưu thông tin giải mã được vào đối tượng req, dùng cho các xử lý ở phía sau.
+                      req.jwtDecoded = decoded;
+
+                      // Cho phép req đi tiếp sang controller.
+                      next();*/
+    } catch (error) {
+      // Nếu giải mã gặp lỗi: Không đúng, hết hạn...etc:
+      return res.status(200).json({
+        message: "Unauthorized.",
+        status: false,
+      });
+    }
+  } else {
+    // Không tìm thấy token trong request
+    return res.status(403).send({
+      message: "No token provided.",
+      status: false,
+    });
+  }
+});
 
 module.exports = router;

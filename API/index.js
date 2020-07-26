@@ -4,19 +4,19 @@ const logger = require("morgan");
 const hbs = require("hbs");
 const path = require("path");
 const bodyParser = require("body-parser");
-const cors = require('cors')
+const cors = require("cors");
 
 const accountsRouter = require("./routes/accounts");
 const historyTransactionRouter = require("./routes/historyTransaction");
-const banksConnectedRouter = require('./routes/banksConnected');
-const employeesRouter = require('./routes/employees');
-const customersRouter = require('./routes/customers');
+const banksConnectedRouter = require("./routes/banksConnected");
+const employeesRouter = require("./routes/employees");
+const customersRouter = require("./routes/customers");
 const demoReactjs = require("./routes/demoReactjs");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
 
 const app = express();
-app.use(cors())
+app.use(cors());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -31,9 +31,9 @@ app.use("/test-security-api", security);
 app.use("/test-security-api-payment", securityPayment);
 app.use("/accounts", accountsRouter);
 app.use("/history", historyTransactionRouter);
-app.use('/banks', banksConnectedRouter);
-app.use('/employees', employeesRouter);
-app.use('/customers', customersRouter);
+app.use("/banks", banksConnectedRouter);
+app.use("/employees", employeesRouter);
+app.use("/customers", customersRouter);
 // app.use("/accounts", accountsRouter);
 app.use("/demo", demoReactjs);
 
