@@ -5,7 +5,7 @@ import {
 	updateValue,
 	doGetTargetNumberAccountThunk,
 	doGetUserInfoThunk,
-	// resetValue,
+	doTransfer,
 } from './InternalBankTransferSlice';
 
 import 'icheck-material/icheck-material.min.css';
@@ -152,7 +152,9 @@ export function InternalBankTransfer(props) {
 			<button
 				type="button"
 				className="btn btn-primary"
-				onClick={async () => {}}>
+				onClick={async () => {
+					dispatch(doTransfer());
+				}}>
 				<span>Xác nhận</span>
 				<span
 					hidden={!transfer.isLoading}

@@ -8,36 +8,27 @@ export const doGetUserInfoThunk = createAsyncThunk(
 		thunkAPI.dispatch(updateValue({ value: true, option: ['isLoading'] }));
 		thunkAPI.dispatch(updateValue({ value: '', option: ['message'] }));
 
-		// const response = await getUserInfo(
-		// 	thunkAPI.getState().internalBankTransferSlice.userName
-		// );
-		// if (response.status) {
-		thunkAPI.dispatch(
-			updateValue({
-				// value: response.data.account,
-				value: 'vxhien96',
-				option: ['userName'],
-			})
+		const response = await getUserInfo(
+			thunkAPI.getState().internalBankTransferSlice.userName
 		);
-		thunkAPI.dispatch(
-			updateValue({
-				// value: response.data.numberAccount,
-				value: '1595736566',
-				option: ['userNumberAccount'],
-			})
-		);
-		thunkAPI.dispatch(
-			updateValue({
-				// value: response.data.currentBalance,
-				value: 1000000,
-				option: ['currentBalance'],
-			})
-		);
-		// } else {
-		// 	thunkAPI.dispatch(
-		// 		updateValue({ value: response.message, option: ['message'] })
-		// 	);
-		// }
+		if (response.status) {
+			thunkAPI.dispatch(
+				updateValue({
+					value: response.paymentAccount.numberAccount,
+					option: ['userNumberAccount'],
+				})
+			);
+			thunkAPI.dispatch(
+				updateValue({
+					value: response.paymentAccount.currentBalance,
+					option: ['currentBalance'],
+				})
+			);
+		} else {
+			thunkAPI.dispatch(
+				updateValue({ value: response.message, option: ['message'] })
+			);
+		}
 
 		thunkAPI.dispatch(updateValue({ value: false, option: ['isLoading'] }));
 	}
@@ -45,7 +36,13 @@ export const doGetUserInfoThunk = createAsyncThunk(
 
 let getUserInfo = function (state) {
 	return axios
-		.get('http://localhost:3000/transfer/UserAccount/' + state)
+		.get('http://localhost:3000/customers/getUserDetail/', {
+			headers: {
+				'x-access-token': localStorage.getItem(
+					'accessToken_Employee_KAT'
+				),
+			},
+		})
 		.then((response) => {
 			return response.data;
 		})
@@ -62,7 +59,6 @@ export const doGetTargetNumberAccountThunk = createAsyncThunk(
 		const response = await getNumberAccount(
 			thunkAPI.getState().internalBankTransferSlice
 		);
-		console.log(response);
 		if (response.status) {
 			thunkAPI.dispatch(
 				updateValue({
@@ -102,14 +98,10 @@ export const doTransfer = createAsyncThunk(
 		const response = await paymentUserAccount(
 			thunkAPI.getState().internalBankTransferSlice
 		);
-		console.log(response);
 		if (response.status) {
-			thunkAPI.dispatch(
-				updateValue({
-					value: response.data.profile.fullName,
-					option: ['targetFullName'],
-				})
-			);
+			// Go to verify otp page
+			localStorage.setItem('otp_id', response.otp_id);
+			window.location = '/verifyOTP';
 		} else {
 			thunkAPI.dispatch(
 				updateValue({ value: response.message, option: ['message'] })
@@ -123,14 +115,12 @@ export const doTransfer = createAsyncThunk(
 let paymentUserAccount = async function (state) {
 	return await axios
 		.post('http://localhost:3000/transfer/transfer-fund', {
-			data: {
-				customer_payment_id: state.userNumberAccount, // Số tài khoản người chuyển
-				target_transfer_id: state.targetNumberAccount, // Số tài khoản người nhận
-				target_transfer_name: state.targetFullName, // Tên người người nhận
-				transfer_amount: state.amount, // Số tiền chuyển
-				transfer_detail: state.detail, // Nội dung chuyển
-				fee_payer: state.feePayer, // Hình thức thanh toán phí. "0": Người chuyển trả, "1": Người nhận trả
-			},
+			customer_payment_id: state.userNumberAccount, // Số tài khoản người chuyển
+			target_transfer_id: state.targetNumberAccount, // Số tài khoản người nhận
+			target_transfer_name: state.targetFullName, // Tên người người nhận
+			transfer_amount: state.amount, // Số tiền chuyển
+			transfer_detail: state.detail, // Nội dung chuyển
+			fee_payer: state.feePayer, // Hình thức thanh toán phí. "0": Người chuyển trả, "1": Người nhận trả
 		})
 		.then((response) => {
 			return response.data;
@@ -143,7 +133,6 @@ let paymentUserAccount = async function (state) {
 export const internalBankTransferSlice = createSlice({
 	name: 'internalBankTransferSlice',
 	initialState: {
-		userName: 'vxhien96',
 		userNumberAccount: '',
 		currentBalance: 0,
 		targetNumberAccount: '',
@@ -167,10 +156,6 @@ export const internalBankTransferSlice = createSlice({
 	},
 	reducers: {
 		updateValue: (state, action) => {
-			if (action.payload.option.includes('userName')) {
-				state.userName = action.payload.value;
-			}
-
 			if (action.payload.option.includes('userNumberAccount')) {
 				state.userNumberAccount = action.payload.value;
 			}
@@ -216,7 +201,6 @@ export const internalBankTransferSlice = createSlice({
 			}
 		},
 		resetValue: (state) => {
-			state.userName = '';
 			state.userNumberAccount = '';
 			state.currentBalance = 0;
 			state.targetNumberAccount = '';
