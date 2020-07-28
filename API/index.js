@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/test-security-api", security);
 app.use("/test-security-api-payment", securityPayment);
 app.use("/accounts", accountsRouter);
-app.use("/interbank", interbankRouter);
+app.use("/api/interbank", interbankRouter);
 app.use("/history", historyTransactionRouter);
 app.use("/banks", banksConnectedRouter);
 app.use("/employees", employeesRouter);
@@ -55,9 +55,5 @@ app.use(function (req, res, next) {
 //   res.status(err.status || 500);
 //   res.render("error");
 // });
-
-app.listen(3000, () => {
-  console.log("App is running on port 3000");
-});
 
 module.exports = app;

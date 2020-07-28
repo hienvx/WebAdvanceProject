@@ -6,7 +6,7 @@ let url =
 let dbName = "DB";
 const Insert = async function (collectionName, data) {
   // Insert some documents
-  let db = await MongoClient({ useUnifiedTopology: true }).connect(url);
+  let db = await MongoClient.connect(url);
 
   if (!db) {
     return false;

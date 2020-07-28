@@ -16,11 +16,12 @@ const signPGP = async () => {
   } = await openpgp.key.readArmored(privateKeyArmored);
   await privateKey.decrypt(passphrase);
 
-  const { data: cleartext } = await openpgp.sign({
+  const { signature: detachedSignature } = await openpgp.sign({
     message: openpgp.cleartext.fromText("Hello, World!"), // CleartextMessage or Message object
     privateKeys: [privateKey], // for signing
+    detached: true,
   });
-  return cleartext; // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
+  return detachedSignature; // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
 };
 
 /**
@@ -29,11 +30,11 @@ const signPGP = async () => {
  * function that will define a series of tests
  */
 describe("security", () => {
-  const host = process.env.HOST || "https://localhost:3000";
+  const host = process.env.HOST || "http://localhost:3000";
   const secret_key = AssociatedBank["KAT"].secretKey;
 
   const client = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: host,
   });
   /**
    * beforeEach allows us to run some code before
@@ -47,63 +48,37 @@ describe("security", () => {
    * second param is callback arrow function
    */
   it("It should return status 200 when request is correct", async () => {
-    const data = {
-      name_bank: "Kianto Bank",
+    const pgp_sig = (await signPGP()).toString();
+    const headers = {
       code: "KAT",
-      data: {},
-      requestTime: Date.now(),
-      pgp_sig: (await signPGP()).toString(),
+      "request-time": Date.now(),
+    };
+
+    const data = {
+      numberAccount: 1593765471,
+      amount: 100000,
     };
 
     await client
-      .post("/test-security-api-payment", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
+      .post(
+        "/api/interbank/deposit",
+        { ...data, pgp_sig: pgp_sig },
+        {
+          headers: {
+            ...headers,
+            "auth-hash": SHA256(
+              data +
+                headers["request-time"] +
+                AssociatedBank[headers.code].secretKey
+            ).toString(),
+          },
+        }
+      )
       .then((res) => {
         expect(res.status).toEqual(200);
       })
       .catch((err) => {
         throw new Error(JSON.stringify(err.response.data));
       });
-  });
-
-  it("It should return 403 when the bank have not assigned before", async () => {
-    const data = {
-      name_bank: "Kianto Bank wrong",
-      code: "KAT",
-      data: {},
-      requestTime: Date.now(),
-    };
-    await expect(
-      client.post("/test-security-api-payment", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
-    ).rejects.toThrow(new Error("Request failed with status code 403"));
-  });
-
-  it("It should return 403 when the signature is wrong", async () => {
-    const data = {
-      name_bank: "Kianto Bank",
-      code: "KAT",
-      data: {},
-      requestTime: Date.now(),
-    };
-    await expect(
-      client.post("/test-security-api-payment", {
-        ...data,
-        signature: SHA256(
-          data +
-            data.requestTime +
-            AssociatedBank[data.code].secretKey +
-            "wrong"
-        ).toString(),
-      })
-    ).rejects.toThrow(new Error("Request failed with status code 403"));
   });
 });
