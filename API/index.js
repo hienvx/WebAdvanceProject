@@ -11,6 +11,7 @@ const historyTransactionRouter = require("./routes/historyTransaction");
 const banksConnectedRouter = require("./routes/banksConnected");
 const employeesRouter = require("./routes/employees");
 const customersRouter = require("./routes/customers");
+const interbankRouter = require("./routes/interbank");
 const demoReactjs = require("./routes/demoReactjs");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/test-security-api", security);
 app.use("/test-security-api-payment", securityPayment);
 app.use("/accounts", accountsRouter);
+app.use("/interbank", interbankRouter);
 app.use("/history", historyTransactionRouter);
 app.use("/banks", banksConnectedRouter);
 app.use("/employees", employeesRouter);
@@ -39,7 +41,7 @@ app.use("/demo", demoReactjs);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  res.send("API not found");
+  res.status(404).send("API not found");
   //next(createError(404));
 });
 

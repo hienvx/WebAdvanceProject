@@ -146,6 +146,7 @@ router.get("/getUserDetail", async (req, res, next) => {
   // Lấy token được gửi lên từ phía client
   const tokenFromClient =
     req.body.token || req.query.token || req.headers["x-access-token"];
+  console.log("tokenFromClient", tokenFromClient);
 
   if (tokenFromClient) {
     // Nếu tồn tại token
@@ -169,6 +170,62 @@ router.get("/getUserDetail", async (req, res, next) => {
             paymentAccount: userDetail[0].paymentAccount,
             savingAccount: userDetail[0].savingAccount,
           });
+        } else {
+          return res.status(200).json({
+            message: "Token invalid",
+            status: false,
+          });
+        }
+      } else {
+        return res.status(200).json({
+          message: "User invalid",
+          status: false,
+        });
+      }
+      /*            // Nếu token hợp lệ, lưu thông tin giải mã được vào đối tượng req, dùng cho các xử lý ở phía sau.
+                      req.jwtDecoded = decoded;
+
+                      // Cho phép req đi tiếp sang controller.
+                      next();*/
+    } catch (error) {
+      // Nếu giải mã gặp lỗi: Không đúng, hết hạn...etc:
+      return res.status(200).json({
+        message: "Unauthorized.",
+        status: false,
+      });
+    }
+  } else {
+    // Không tìm thấy token trong request
+    return res.status(403).send({
+      message: "No token provided.",
+      status: false,
+    });
+  }
+});
+
+router.get("/getSavingAccounts", async (req, res, next) => {
+  // Lấy token được gửi lên từ phía client
+  const tokenFromClient =
+    req.body.token || req.query.token || req.headers["x-access-token"];
+
+  if (tokenFromClient) {
+    // Nếu tồn tại token
+    try {
+      // Thực hiện giải mã token xem có hợp lệ hay không?
+      const decoded = await jwtHelper.verifyToken(
+        tokenFromClient,
+        accessTokenSecret
+      );
+
+      const userLogin = await db.Find("tokens", {
+        account: decoded.data.account,
+      });
+      if (userLogin.length > 0) {
+        if (tokenFromClient === userLogin[0].accessToken) {
+          const userDetail = await db.Find("customers", {
+            account: decoded.data.account,
+          });
+          return res.json([...userDetail[0].savingAccount]);
         } else {
           return res.status(200).json({
             message: "Token invalid",

@@ -13,7 +13,7 @@ describe("security", () => {
   const secret_key = AssociatedBank["KAT"].secretKey;
 
   const client = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: host,
   });
   /**
    * beforeEach allows us to run some code before
@@ -27,25 +27,37 @@ describe("security", () => {
    * second param is callback arrow function
    */
   it("It should return status 200 when request is correct", async () => {
-    const data = {
+    const headers = {
       name_bank: "Kianto Bank",
       code: "KAT",
       data: {},
       requestTime: Date.now(),
     };
 
+    const data = {};
+
     await client
-      .post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
+      .post(
+        "/test-security-api",
+        {
+          headers: {
+            ...headers,
+            signature: SHA256(
+              headers +
+                headers.requestTime +
+                AssociatedBank[headers.code].secretKey
+            ).toString(),
+          },
+        },
+        {
+          ...data,
+        }
+      )
       .then((res) => {
         expect(res.status).toEqual(200);
       })
       .catch((err) => {
-        throw new Error(JSON.stringify(err.response.data));
+        throw new Error(JSON.stringify(err.response));
       });
   });
 
