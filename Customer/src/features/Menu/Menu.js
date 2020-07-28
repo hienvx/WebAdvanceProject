@@ -1,6 +1,6 @@
 import React from "react";
 import $ from "jquery";
-import { CreateCustomerAccount } from "../FormCreateCustomerAccount/CustomerAccount";
+import { ListAccounts } from "../ListAccounts/ListAccounts";
 import { History } from "../History/History";
 import { Recharge } from "../Recharge/Recharge";
 import { useDispatch, useSelector } from "react-redux";
@@ -111,7 +111,7 @@ export function Menu() {
           </div>
         </nav>
 
-        <CreateCustomerAccount hidden={menu.categorySelected !== 0} />
+        <ListAccounts hidden={menu.categorySelected !== 0} />
         <Recharge hidden={menu.categorySelected !== 1} />
         <History hidden={menu.categorySelected !== 2} />
       </div>
