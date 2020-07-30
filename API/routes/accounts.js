@@ -20,14 +20,13 @@ router.post("/Auth/logout", AuthController.logout);
 /*router.use(AuthMiddleWare.isAuth);*/
 router.post("/Auth/refresh-token", AuthController.refreshToken);
 
-
 router.get("/UserAccount/:userAccount", async function (req, res, next) {
   let account = req.params.userAccount;
 
   let customers = await DB.Find("customers", { account: account });
 
   if (customers.length == 0) {
-    res.send({"status": false, "message": "User is not exist", data:[]});
+    res.send({ status: false, message: "User is not exist", data: [] });
   }
 
   let customer = customers[0];
@@ -38,15 +37,17 @@ router.get("/UserAccount/:userAccount", async function (req, res, next) {
     profile: customer.profile,
   };
 
-  res.send({"status": true, "message": "", data:result});
+  res.send({ status: true, message: "", data: result });
 });
 
 router.get("/NumberAccount/:numberAccount", async function (req, res, next) {
   let account = req.params.numberAccount;
-  let customers = await DB.Find("customers", { "paymentAccount.numberAccount": account });
+  let customers = await DB.Find("customers", {
+    "paymentAccount.numberAccount": account,
+  });
 
   if (customers.length == 0) {
-    res.send({"status": true, "message": "", data:[]});
+    res.send({ status: true, message: "", data: [] });
   }
 
   let customer = customers[0];
@@ -57,15 +58,10 @@ router.get("/NumberAccount/:numberAccount", async function (req, res, next) {
     profile: customer.profile,
   };
 
-  res.send({"status": true, "message": "", data: result});
+  res.send({ status: true, message: "", data: result });
 });
 
-
-router.post("/payment/Account", async function (
-  req,
-  res,
-  next
-) {
+router.post("/payment/Account", async function (req, res, next) {
   /*
    * req.body.data = {
    *   "account": "", // tài khoản cần nạp
@@ -85,7 +81,7 @@ router.post("/payment/Account", async function (
   let customers = await DB.Find("customers", { account: account });
 
   if (customers.length == 0) {
-    res.send({"status": false, "message": "User is not exist"});
+    res.send({ status: false, message: "User is not exist" });
     return;
   }
 
@@ -111,21 +107,17 @@ router.post("/payment/Account", async function (
         type: "employee",
         account: employeeAccount,
       },
-      bank:bank,
+      bank: bank,
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
-    res.send({"status": true, "message": ""});
+    res.send({ status: true, message: "" });
   } else {
-    res.send({"status": false, "message": "An error occurred"});
+    res.send({ status: false, message: "An error occurred" });
   }
 });
 
-router.post("/payment/NumberAccount", async function (
-  req,
-  res,
-  next
-) {
+router.post("/payment/NumberAccount", async function (req, res, next) {
   /*
    * req.body.data = {
    *   "numberAccount": "", // số tài khoản cần nạp
@@ -138,7 +130,7 @@ router.post("/payment/NumberAccount", async function (
   /*
    * Thiếu bước giải mã gói tin
    */
-console.log(req.body.data)
+  console.log(req.body.data);
   let numberAccount = req.body.data.numberAccount;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
@@ -149,7 +141,7 @@ console.log(req.body.data)
   });
 
   if (customers.length == 0) {
-    res.send({"status": false, "message": "User is not exist"});
+    res.send({ status: false, message: "User is not exist" });
     return;
   }
 
@@ -173,7 +165,7 @@ console.log(req.body.data)
     let log = {
       account: account,
       amount: amount,
-      type: 1 ,// "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
         type: "employee",
         account: employeeAccount,
@@ -182,9 +174,9 @@ console.log(req.body.data)
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
-    res.send({"status": true, "message": ""});
+    res.send({ status: true, message: "" });
   } else {
-    res.send({"status": false, "message": "An error occurred"});
+    res.send({ status: false, message: "An error occurred" });
   }
 });
 

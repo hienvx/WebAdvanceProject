@@ -3,13 +3,17 @@ import $ from "jquery";
 import { ListAccounts } from "../ListAccounts/ListAccounts";
 import { History } from "../History/History";
 import { Recharge } from "../Recharge/Recharge";
+import { InternalBankTransfer } from "../InternalBankTransfer/InternalBankTransfer";
+import { VerifyOTP } from "../VerifyOTP/VerifyOTP";
+import { InternalTransferFinish } from "../InternalBankTransfer/InternalTransferFinish";
 import { useDispatch, useSelector } from "react-redux";
 import {
   menuModel,
-  selectCategory,
+  //   selectCategory,
   doLogoutThunk,
   doCheckLoginThunk,
 } from "./MenuSlice";
+import { Route, NavLink } from "react-router-dom";
 
 export function Menu() {
   const dispatch = useDispatch();
@@ -23,56 +27,42 @@ export function Menu() {
       <nav id="sidebar">
         <div className="p-4 pt-5">
           <ul className="list-unstyled components mb-5">
-            <li className={menu.categorySelected === 0 ? "active" : null}>
-              <a
-                onClick={() => {
-                  dispatch(selectCategory(0));
-                }}
+            <li>
+              <NavLink
+                activeClassName="active"
+                exact
+                to="/createCustomerAccount"
               >
                 Danh sách tài khoản
-              </a>
+              </NavLink>
             </li>
 
-            <li className={menu.categorySelected === 1 ? "active" : null}>
-              <a
-                onClick={() => {
-                  dispatch(selectCategory(1));
-                }}
-              >
+            <li>
+              <NavLink activeClassName="active" to="/recharge">
                 Thiết lập danh sách người nhận
-              </a>
+              </NavLink>
             </li>
 
-            <li className={menu.categorySelected === 2 ? "active" : null}>
-              <a
-                onClick={() => {
-                  dispatch(selectCategory(2));
-                }}
-              >
-                Chuyển khoản
-              </a>
+            <li>
+              <NavLink activeClassName="active" to="/internalTransfer">
+                Chuyển khoản nội bộ
+              </NavLink>
+            </li>
+            <li hidden>
+              <NavLink to="/verifyOTP"></NavLink>
+            </li>
+            <li hidden>
+              <NavLink to="/tranferFinish"></NavLink>
             </li>
 
-            <li className={menu.categorySelected === 3 ? "active" : null}>
-              <a
-                onClick={() => {
-                  dispatch(selectCategory(3));
-                }}
-              >
-                Quản lý nhắc nợ
-              </a>
-            </li>
+            {/* <li>
+              <NavLink activeClassName="active" to="/interTransfer">
+                Chuyển khoản liên ngân hàng
+              </NavLink>
+            </li> */}
           </ul>
 
-          <div className="footer">
-            {/*<p>
-                            Copyright &copy;
-                            <script>document.write(new Date().getFullYear());</script>
-                            All rights reserved | This template is made with <i className="icon-heart"
-                                                                                aria-hidden="true"></i> by <a
-                                href="https://colorlib.com" target="_blank">Colorlib.com</a>
-                           </p>*/}
-          </div>
+          <div className="footer"></div>
         </div>
       </nav>
 
@@ -88,14 +78,7 @@ export function Menu() {
               }}
             >
               <i className="fa fa-bars"></i>
-              {/*<span className="sr-only">Toggle Menu</span>*/}
             </button>
-            {/*<button className="btn btn-dark d-inline-block d-lg-none ml-auto" type="button"
-                                data-toggle="collapse"
-                                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
-                            <i className="fa fa-bars"></i>
-                        </button>*/}
 
             <h3>Internet banking</h3>
 
@@ -112,8 +95,14 @@ export function Menu() {
         </nav>
 
         <ListAccounts hidden={menu.categorySelected !== 0} />
+        {/* <CreateCustomerAccount hidden={menu.categorySelected !== 0} />
         <Recharge hidden={menu.categorySelected !== 1} />
-        <History hidden={menu.categorySelected !== 2} />
+        <InternalBankTransfer hidden={menu.categorySelected !== 2} />
+        <InterBankTransfer hidden={menu.categorySelected !== 3} /> */}
+        <Route path="/recharge" component={Recharge} />
+        <Route path="/internalTransfer" component={InternalBankTransfer} />
+        <Route path="/verifyOTP" component={VerifyOTP} />
+        <Route path="/tranferFinish" component={InternalTransferFinish} />
       </div>
     </div>
   );

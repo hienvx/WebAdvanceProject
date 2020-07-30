@@ -168,7 +168,8 @@ router.get("/getUserDetail", async (req, res, next) => {
           return res.json({
             profile: userDetail[0].profile,
             paymentAccount: userDetail[0].paymentAccount,
-            savingAccount: userDetail[0].savingAccount,
+			savingAccount: userDetail[0].savingAccount,
+			status: true,
           });
         } else {
           return res.status(200).json({

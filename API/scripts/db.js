@@ -21,6 +21,25 @@ const Insert = async function (collectionName, data) {
   return status.result.ok > 0;
 };
 
+// Basically Insert but return id of inserted record
+const InsertReturnId = async function (collectionName, data) {
+  // Insert some documents
+  let db = await MongoClient.connect(url);
+
+  if (!db) {
+    return false;
+  }
+
+  console.log("Connection established server");
+  let client = db.db(dbName);
+  let collection = client.collection(collectionName);
+  let result = await collection.insertMany(data);
+
+  await db.close();
+  console.log("Closed connection to server");
+  return result.insertedIds[0];
+};
+
 const Update = async function (collectionName, data, condition) {
   let db = await MongoClient.connect(url).catch((err) => {
     console.log(err);
@@ -90,6 +109,7 @@ let database = {
   Delete, // Usage: Update("customer", {a:1})
   Find, // Usage: Find("customer", {"typeAccount":"TKTK"}, {numberAccount: -1});
   //        Find("customer", {"typeAccount":"TKTK"}, {numberAccount: 1}, 2);
+  InsertReturnId, // Usage: Insert("customer", [object,object,...])
 };
 
 module.exports = database;
