@@ -3,7 +3,7 @@ let express = require("express");
 let router = express.Router();
 const moment = require("moment");
 const fetch = require("isomorphic-fetch");
-
+const authMiddleWare = require("../scripts/AuthMiddleware");
 const bcrypt = require("bcrypt");
 const db = require("../scripts/db");
 const jwtHelper = require("../scripts/jwt.helper");
@@ -142,6 +142,60 @@ router.post("/", async function (req, res, next) {
 
 router.post("/login", login);
 
+router.post("/loginWithoutRecaptcha", async (req, res, next) => {
+  try {
+    const userData = {
+      account: req.body.account,
+    };
+
+    const userLogin = await db.Find("customers", { account: userData.account });
+    if (userLogin.length > 0) {
+      let hash = userLogin[0].pass;
+      let loginSuccess = bcrypt.compareSync(req.body.pass, hash); // true
+      if (!loginSuccess) {
+        return res
+          .status(200)
+          .json({ message: "Password Incorrect", status: false });
+      }
+    } else {
+      return res.status(200).json({ message: "User invalid", status: false });
+    }
+
+    const accessToken = await jwtHelper.generateToken(
+      userData,
+      accessTokenSecret,
+      accessTokenLife
+    );
+
+    const refreshToken = await jwtHelper.generateToken(
+      userData,
+      refreshTokenSecret,
+      refreshTokenLife
+    );
+    const isUserHadToken = await db.Find("tokens", {
+      account: userData.account,
+    });
+    if (isUserHadToken.length == 0) {
+      await db.Insert("tokens", [
+        { account: userData.account, accessToken, refreshToken },
+      ]);
+    } else {
+      await db.Update(
+        "tokens",
+        { accessToken, refreshToken },
+        { account: userData.account }
+      );
+    }
+
+    console.log(req.body);
+    return res.status(200).json({ accessToken, refreshToken, status: true });
+  } catch (error) {
+    console.log("login -> error", error);
+
+    return res.status(500).json({ error, status: false });
+  }
+});
+
 router.get("/getUserDetail", async (req, res, next) => {
   // Lấy token được gửi lên từ phía client
   const tokenFromClient =
@@ -168,8 +222,8 @@ router.get("/getUserDetail", async (req, res, next) => {
           return res.json({
             profile: userDetail[0].profile,
             paymentAccount: userDetail[0].paymentAccount,
-			savingAccount: userDetail[0].savingAccount,
-			status: true,
+            savingAccount: userDetail[0].savingAccount,
+            status: true,
           });
         } else {
           return res.status(200).json({
@@ -259,5 +313,114 @@ router.get("/getSavingAccounts", async (req, res, next) => {
     });
   }
 });
+
+const decodeUserToken = async (tokenFromClient, accessTokenSecret) => {
+  try {
+    // Thực hiện giải mã token xem có hợp lệ hay không?
+    const decoded = await jwtHelper.verifyToken(
+      tokenFromClient,
+      accessTokenSecret
+    );
+
+    return decoded.data.account;
+  } catch (error) {
+    throw error;
+  }
+};
+
+router.post(
+  "/addSavingAccount",
+  authMiddleWare.isAuthenticate,
+  async (req, res, next) => {
+    try {
+      //Body
+      // {
+      //   "numberAccount": 1596099637,
+      //   "typeSaving": 1, [1: "14 ngày - 0.2%/năm" , 2: "1 tháng - 3.7%/năm"", 3: "6 tháng: 4.4%/năm", 4:"12 tháng: 6.0%/năm" ]
+      //   "amount": 10000,
+      //   "typeReceiving": 1 [1:"Lãi nhập gốc"" , 2: "Lãi trả vào tài khoản tiền gửi khi đến hạn trả lãi"]
+      // }
+
+      if (!req.body.typeSaving)
+        return res
+          .status(500)
+          .json({ status: 500, message: "typeSaving is required" });
+      if (!req.body.amount)
+        return res
+          .status(500)
+          .json({ status: 500, message: "amount is required" });
+      if (!req.body.typeReceiving)
+        return res
+          .status(500)
+          .json({ status: 500, message: "typeReceiving is required" });
+
+      // Lấy token được gửi lên từ phía client
+      const tokenFromClient =
+        req.body.token || req.query.token || req.headers["x-access-token"];
+
+      const account = await decodeUserToken(tokenFromClient, accessTokenSecret);
+      const customers = await DB.Find("customers", { account: account });
+
+      const customer = customers[0];
+
+      //Create Saving Account
+      if (req.body.amount > customer.paymentAccount.currentBalance)
+        return res.status(500).json({
+          status: 500,
+          message: "Current balance have not enough money",
+        });
+
+      if (!customer.savingAccount.length) {
+        await DB.Update(
+          "customers",
+          {
+            "paymentAccount.currentBalance":
+              parseInt(customer.paymentAccount.currentBalance) -
+              req.body.amount,
+            savingAccount: [
+              {
+                numberAccount: moment().unix(),
+                typeSaving: req.body.typeSaving,
+                typeReceiving: req.body.typeReceiving,
+                currentBalance: req.body.amount,
+              },
+            ],
+          },
+          { account: customer.account }
+        ).then((ok) => {
+          console.log("ok", ok);
+          if (!ok) throw Error("Fail");
+        });
+      } else {
+        await DB.Update(
+          "customers",
+          {
+            "paymentAccount.currentBalance":
+              parseInt(customer.paymentAccount.currentBalance) -
+              req.body.amount,
+            savingAccount: [
+              ...customer.savingAccount,
+              {
+                numberAccount: moment().unix(),
+                typeSaving: req.body.typeSaving,
+                typeReceiving: req.body.typeReceiving,
+                currentBalance: req.body.amount,
+              },
+            ],
+          },
+          { account: customer.account }
+        ).then((ok) => {
+          console.log("ok", ok);
+          if (!ok) throw Error("Fail");
+        });
+      }
+
+      return res.json({ status: 200, message: "ok" });
+    } catch (error) {
+      console.error("error", error);
+      return res.json({ error });
+    }
+  }
+);
 
 module.exports = router;

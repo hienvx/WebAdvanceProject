@@ -7,18 +7,29 @@ export const doGetListAccountsThunk = createAsyncThunk(
     thunkAPI.dispatch(updateValue({ value: false, option: ["isStart"] }));
     thunkAPI.dispatch(updateValue({ value: true, option: ["isLoading"] }));
 
-    let dataUserAccount = await getListAccounts(
+    let dataUserSavingAccounts = await getListAccounts(
       thunkAPI.getState().listAccountsSlice.userAccountFilter
     );
 
+    let dataUserDetail = await getUserDetail();
+    // console.log("dataUserSavingAccounts", dataUserSavingAccounts);
     thunkAPI.dispatch(
       updateValue({
-        value: dataUserAccount.results,
-        option: ["dataUserAccount"],
+        value: dataUserDetail,
+        option: ["dataUserDetail"],
       })
     );
     thunkAPI.dispatch(
-      updateValue({ value: dataUserAccount.total, option: ["totalData"] })
+      updateValue({
+        value: dataUserSavingAccounts,
+        option: ["dataUserSavingAccounts"],
+      })
+    );
+    thunkAPI.dispatch(
+      updateValue({
+        value: dataUserSavingAccounts.length,
+        option: ["totalData"],
+      })
     );
     thunkAPI.dispatch(updateValue({ value: false, option: ["isLoading"] }));
   }
@@ -32,7 +43,6 @@ let getListAccounts = function (state) {
       },
     })
     .then((result) => {
-      console.log("getListAccounts -> result", result);
       return result.data;
     })
     .catch((e) => {
@@ -41,10 +51,32 @@ let getListAccounts = function (state) {
     });
 };
 
+let getUserDetail = function (state) {
+  return axios
+    .get("http://localhost:3000/customers/getUserDetail", {
+      headers: {
+        "x-access-token": localStorage.getItem("accessToken_Employee_KAT"),
+      },
+    })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((e) => {
+      console.log(e);
+      return {};
+    });
+};
+
 export const listAccountsSlice = createSlice({
   name: "listAccountsSlice",
   initialState: {
-    dataUserAccount: [],
+    dataUserDetail: {
+      paymentAccount: {
+        numberAccount: "",
+        currentBalance: "",
+      },
+    },
+    dataUserSavingAccounts: [],
     userAccountFilter: {
       filter: "",
       type: "0",
@@ -82,8 +114,12 @@ export const listAccountsSlice = createSlice({
         state.isLoading = action.payload.value;
       }
 
-      if (action.payload.option.includes("dataUserAccount")) {
-        state.dataUserAccount = action.payload.value;
+      if (action.payload.option.includes("dataUserSavingAccounts")) {
+        state.dataUserSavingAccounts = action.payload.value;
+      }
+
+      if (action.payload.option.includes("dataUserDetail")) {
+        state.dataUserDetail = action.payload.value;
       }
 
       if (action.payload.option.includes("skip")) {

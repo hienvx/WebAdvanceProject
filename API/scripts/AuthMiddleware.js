@@ -121,4 +121,5 @@ let isAuthenticate = async (req, res, next) => {
 
 module.exports = {
   isAuth: isAuth,
+  isAuthenticate,
 };

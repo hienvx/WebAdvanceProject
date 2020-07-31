@@ -28,11 +28,7 @@ export function Menu() {
         <div className="p-4 pt-5">
           <ul className="list-unstyled components mb-5">
             <li>
-              <NavLink
-                activeClassName="active"
-                exact
-                to="/createCustomerAccount"
-              >
+              <NavLink activeClassName="active" exact to="/list-accounts">
                 Danh sách tài khoản
               </NavLink>
             </li>
@@ -93,12 +89,8 @@ export function Menu() {
             </button>
           </div>
         </nav>
-
-        <ListAccounts hidden={menu.categorySelected !== 0} />
-        {/* <CreateCustomerAccount hidden={menu.categorySelected !== 0} />
-        <Recharge hidden={menu.categorySelected !== 1} />
-        <InternalBankTransfer hidden={menu.categorySelected !== 2} />
-        <InterBankTransfer hidden={menu.categorySelected !== 3} /> */}
+        {/* <InterBankTransfer hidden={menu.categorySelected !== 3} /> */}
+        <Route path="/list-accounts" component={ListAccounts} />
         <Route path="/recharge" component={Recharge} />
         <Route path="/internalTransfer" component={InternalBankTransfer} />
         <Route path="/verifyOTP" component={VerifyOTP} />
