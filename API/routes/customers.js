@@ -332,6 +332,7 @@ router.post(
   "/addSavingAccount",
   authMiddleWare.isAuthenticate,
   async (req, res, next) => {
+    console.log(req.body);
     try {
       //Body
       // {
