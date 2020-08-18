@@ -1,10 +1,16 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginModel, updateValue, doLoginThunk } from "./LoginSlice";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export function Login(props) {
   const dispatch = useDispatch();
   const login = useSelector(loginModel);
+
+  function onChange(value) {
+    console.log("Captcha value:", value);
+    dispatch(updateValue({ value: value, option: ["recaptchaToken"] }));
+  }
 
   return (
     <div className={"col-4 login-center"}>
@@ -38,6 +44,11 @@ export function Login(props) {
                 }}
               />
             </div>
+            <ReCAPTCHA
+              sitekey="6LdY57UZAAAAAEp-pM98sCnvFZTPILCKjnWn6EH5"
+              onChange={onChange}
+              style={{ margin: 10 }}
+            />
             <button
               type="button"
               className="btn btn-primary"
