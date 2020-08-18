@@ -232,6 +232,7 @@ router.post("/confirm-tranfer", async function (req, res, next) {
   result = await DB.Find("customers", {
     "paymentAccount.numberAccount": otp_info.customer_payment_id,
   });
+  let transfer = result;
   if (result.length == 0) {
     res.status(401).json({
       status: false,
@@ -290,6 +291,18 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     "paymentAccount.numberAccount": otp_info.target_transfer_id,
   });
 
+  let log = {
+    account: transfer.account,
+    amount: String(otp_info.transfer_amount),
+    type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+    performer: {
+      type: "customer",
+      account: "customerAccount",
+    },
+    bank: "N42",
+    time: moment().unix(),
+  };
+  await DB.Insert("transaction_history", [log]);
   res.status(200).json({ status: result, message: "Giao dịch thành công" });
 });
 
