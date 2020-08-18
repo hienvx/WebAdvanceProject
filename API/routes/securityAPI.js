@@ -16,6 +16,7 @@ const AssociatedBank = require("../secrets/associated-bank.json");
 
 const security = function (req, res, next) {
   const code = req.headers.code;
+  console.log("security -> code", code);
   const requestTime = req.headers["request-time"];
   const auth_hash = req.headers["auth-hash"];
 

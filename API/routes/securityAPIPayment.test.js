@@ -5,11 +5,19 @@ const fs = require("fs");
 const openpgp = require("openpgp");
 const AssociatedBank = require("../secrets/associated-bank.json");
 
-const signPGP = async () => {
+jest.setTimeout(30000);
+
+const signPGP = async (bankCode) => {
   const privateKeyArmored = fs.readFileSync(
-    "./secrets/pgp/privatekey-signature-test.gpg"
+    bankCode === "KAT"
+      ? "./secrets/pgp/privatekey-signature-KAT.gpg"
+      : "./secrets/pgp/privatekey-signature-TCK.gpg"
   );
-  const passphrase = fs.readFileSync("./secrets/pgp/passphrase.txt"); // what the private key is encrypted with
+  const passphrase = fs.readFileSync(
+    bankCode === "KAT"
+      ? "./secrets/pgp/passphrase.txt"
+      : "./secrets/pgp/passphraseTCK.txt"
+  ); // what the private key is encrypted with
 
   const {
     keys: [privateKey],
@@ -29,8 +37,9 @@ const signPGP = async () => {
  * name of the object as string for which the test is written
  * function that will define a series of tests
  */
-describe("security", () => {
-  const host = process.env.HOST || "http://localhost:3000";
+describe("security for KAT", () => {
+  const host = process.env.HOST || "https://nhom42bank.herokuapp.com/";
+
   const secret_key = AssociatedBank["KAT"].secretKey;
 
   const client = axios.create({
@@ -48,7 +57,7 @@ describe("security", () => {
    * second param is callback arrow function
    */
   it("It should return status 200 when request is correct", async () => {
-    const pgp_sig = (await signPGP()).toString();
+    const pgp_sig = (await signPGP("KAT")).toString();
     const headers = {
       code: "KAT",
       "request-time": Date.now(),
@@ -56,7 +65,7 @@ describe("security", () => {
 
     const data = {
       numberAccount: 1593765471,
-      amount: 100000,
+      amount: 1000,
     };
 
     await client
@@ -72,13 +81,69 @@ describe("security", () => {
                 AssociatedBank[headers.code].secretKey
             ).toString(),
           },
+          timeout: 30000,
         }
       )
       .then((res) => {
         expect(res.status).toEqual(200);
       })
       .catch((err) => {
-        throw new Error(JSON.stringify(err.response.data));
+        throw new Error(JSON.stringify(err.response));
+      });
+  });
+});
+
+describe("security for TCK", () => {
+  const host = process.env.HOST || "https://nhom42bank.herokuapp.com/";
+  const secret_key = AssociatedBank["tckbank"].secretKey;
+
+  const client = axios.create({
+    baseURL: host,
+  });
+  /**
+   * beforeEach allows us to run some code before
+   * running any test
+   * example creating an instance
+   */
+  beforeEach(() => {});
+  /**
+   * it function is used to write unit tests
+   * first param is a description
+   * second param is callback arrow function
+   */
+  it("It should return status 200 when request is correct", async () => {
+    const pgp_sig = (await signPGP("tckbank")).toString();
+    const headers = {
+      code: "tckbank",
+      "request-time": Date.now(),
+    };
+
+    const data = {
+      numberAccount: 1593765471,
+      amount: 1000,
+    };
+
+    await client
+      .post(
+        "/api/interbank/deposit",
+        { ...data, pgp_sig: pgp_sig },
+        {
+          headers: {
+            ...headers,
+            "auth-hash": SHA256(
+              data +
+                headers["request-time"] +
+                AssociatedBank[headers.code].secretKey
+            ).toString(),
+          },
+          timeout: 30000,
+        }
+      )
+      .then((res) => {
+        expect(res.status).toEqual(200);
+      })
+      .catch((err) => {
+        throw new Error(JSON.stringify(err.response));
       });
   });
 });

@@ -67,6 +67,26 @@ let getUserDetail = function (state) {
     });
 };
 
+let addSavingAccount = function (state) {
+  return axios
+    .post(
+      "http://localhost:3000/customers/addSavingAccount",
+      {},
+      {
+        headers: {
+          "x-access-token": localStorage.getItem("accessToken_Employee_KAT"),
+        },
+      }
+    )
+    .then((result) => {
+      return result.data;
+    })
+    .catch((e) => {
+      console.log(e);
+      return {};
+    });
+};
+
 export const listAccountsSlice = createSlice({
   name: "listAccountsSlice",
   initialState: {

@@ -36,7 +36,9 @@ router.get("/get-account-info", security, async (req, res, next) => {
 router.post("/deposit", securityPayment, async (req, res, next) => {
   try {
     const numberAccount = req.body.numberAccount.toString();
+    console.log("numberAccount", numberAccount);
     const amount = req.body.amount.toString();
+    console.log("amount", amount);
 
     //processing exceptions
     if (!numberAccount)
@@ -75,13 +77,14 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
     ]);
 
     //transfer to local account
-    currentBalance = parseInt(customer.paymentAccount.currentBalance + 0);
+    currentBalance = parseInt(customer.paymentAccount.currentBalance);
+    console.log("currentBalance", currentBalance);
+    const newBalance = currentBalance + parseInt(amount);
+    console.log("newBalance", newBalance);
     await DB.Update(
       "customers",
       {
-        "paymentAccount.currentBalance": (
-          currentBalance + parseInt(amount)
-        ).toString(),
+        "paymentAccount.currentBalance": newBalance.toString(),
       },
       { account: customer.account }
     );

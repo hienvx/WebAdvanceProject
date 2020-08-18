@@ -3,21 +3,6 @@ const SHA256 = require("crypto-js/sha256");
 const AssociatedBank = require("../secrets/associated-bank.json");
 const fs = require("fs");
 
-// Check publickey
-let publicKeyArmored = "";
-// fs.readFile('packages/api/secrets/pgp/publickey-' + code + '.gpg', 'utf8', (err, data) => {
-//   if (err)  throw Error("No public key")
-//   publicKeyArmored = data;
-// });
-fs.readFile(
-  "./secrets/pgp/publickey-signature-test.gpg",
-  "utf8",
-  (err, data) => {
-    if (err) throw Error("No public key");
-    publicKeyArmored = data;
-  }
-);
-
 /** Body Example
  * {
  *      "name_bank": "KiantoBank", // Partner name (Ten ngan hang)
@@ -36,7 +21,20 @@ const securityPayment = async function (req, res, next) {
   const requestTime = req.headers["request-time"];
   const auth_hash = req.headers["auth-hash"];
   const pgp_sig = req.body.pgp_sig;
-  console.log("pgp_sig", pgp_sig);
+
+  /*----------------*/
+  // Check publickey
+  // fs.readFile('packages/api/secrets/pgp/publickey-' + code + '.gpg', 'utf8', (err, data) => {
+  //   if (err)  throw Error("No public key")
+  //   publicKeyArmored = data;
+  // });
+  const publicKeyArmored = await fs.readFileSync(
+    code === "KAT"
+      ? "./secrets/pgp/publickey-signature-KAT.gpg"
+      : "./secrets/pgp/publickey-signature-TCK.gpg",
+    "utf8"
+  );
+  /*----------------*/
 
   // Check bank have been added in list
   if (!AssociatedBank[code])
@@ -89,4 +87,5 @@ const securityPayment = async function (req, res, next) {
 
   return next();
 };
+
 module.exports = { securityPayment };
