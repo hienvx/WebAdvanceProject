@@ -8,12 +8,12 @@ const AssociatedBank = require("../secrets/associated-bank.json");
  * name of the object as string for which the test is written
  * function that will define a series of tests
  */
-describe("security", () => {
-  const host = process.env.HOST || "https://localhost:3000";
+describe("security for KAT", () => {
+  const host = process.env.HOST || "https://nhom42bank.herokuapp.com/";
   const secret_key = AssociatedBank["KAT"].secretKey;
 
   const client = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: host,
   });
   /**
    * beforeEach allows us to run some code before
@@ -27,62 +27,79 @@ describe("security", () => {
    * second param is callback arrow function
    */
   it("It should return status 200 when request is correct", async () => {
-    const data = {
-      name_bank: "Kianto Bank",
+    const headers = {
       code: "KAT",
-      data: {},
-      requestTime: Date.now(),
+      "request-time": Date.now(),
     };
 
+    const data = {};
+
     await client
-      .post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
+      .get("/api/interbank/get-account-info?number=1593765471", {
+        headers: {
+          ...headers,
+          "auth-hash": SHA256(
+            data +
+              headers["request-time"] +
+              AssociatedBank[headers.code].secretKey
+          ).toString(),
+          timeout: 30000,
+        },
       })
       .then((res) => {
         expect(res.status).toEqual(200);
       })
       .catch((err) => {
+        console.log("err", err);
         throw new Error(JSON.stringify(err.response.data));
       });
   });
+});
 
-  it("It should return 403 when the bank have not assigned before", async () => {
-    const data = {
-      name_bank: "Kianto Bank wrong",
-      code: "KAT",
-      data: {},
-      requestTime: Date.now(),
-    };
-    await expect(
-      client.post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data + data.requestTime + AssociatedBank[data.code].secretKey
-        ).toString(),
-      })
-    ).rejects.toThrow(new Error("Request failed with status code 403"));
+describe("security for TCK", () => {
+  const host = process.env.HOST || "https://nhom42bank.herokuapp.com/";
+  const secret_key = AssociatedBank["tckbank"].secretKey;
+
+  const client = axios.create({
+    baseURL: host,
   });
-
-  it("It should return 403 when the signature is wrong", async () => {
-    const data = {
-      name_bank: "Kianto Bank",
-      code: "KAT",
-      data: {},
-      requestTime: Date.now(),
+  /**
+   * beforeEach allows us to run some code before
+   * running any test
+   * example creating an instance
+   */
+  beforeEach(() => {});
+  /**
+   * it function is used to write unit tests
+   * first param is a description
+   * second param is callback arrow function
+   */
+  it("It should return status 200 when request is correct", async () => {
+    const headers = {
+      code: "tckbank",
+      "request-time": Date.now(),
     };
-    await expect(
-      client.post("/test-security-api", {
-        ...data,
-        signature: SHA256(
-          data +
-            data.requestTime +
-            AssociatedBank[data.code].secretKey +
-            "wrong"
-        ).toString(),
+
+    const data = {};
+
+    await client
+      .get("/api/interbank/get-account-info?number=1593765471", {
+        headers: {
+          ...headers,
+          "auth-hash": SHA256(
+            data +
+              headers["request-time"] +
+              AssociatedBank[headers.code].secretKey
+          ).toString(),
+          timeout: 30000,
+        },
       })
-    ).rejects.toThrow(new Error("Request failed with status code 403"));
+      .then((res) => {
+        expect(res.status).toEqual(200);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        throw new Error(JSON.stringify(err.response.data));
+      });
   });
 });

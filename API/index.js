@@ -4,19 +4,20 @@ const logger = require("morgan");
 const hbs = require("hbs");
 const path = require("path");
 const bodyParser = require("body-parser");
-const cors = require('cors')
+const cors = require("cors");
 
 const accountsRouter = require("./routes/accounts");
 const historyTransactionRouter = require("./routes/historyTransaction");
-const banksConnectedRouter = require('./routes/banksConnected');
-const employeesRouter = require('./routes/employees');
-const customersRouter = require('./routes/customers');
-const demoReactjs = require("./routes/demoReactjs");
+const banksConnectedRouter = require("./routes/banksConnected");
+const employeesRouter = require("./routes/employees");
+const customersRouter = require("./routes/customers");
+const transferRouter = require("./routes/transfer");
+const interbankRouter = require("./routes/interbank");
 const { security } = require("./routes/securityAPI");
 const { securityPayment } = require("./routes/securityAPIPayment");
 
 const app = express();
-app.use(cors())
+app.use(cors());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -30,16 +31,17 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/test-security-api", security);
 app.use("/test-security-api-payment", securityPayment);
 app.use("/accounts", accountsRouter);
+app.use("/api/interbank", interbankRouter);
 app.use("/history", historyTransactionRouter);
-app.use('/banks', banksConnectedRouter);
-app.use('/employees', employeesRouter);
-app.use('/customers', customersRouter);
+app.use("/banks", banksConnectedRouter);
+app.use("/employees", employeesRouter);
+app.use("/customers", customersRouter);
 // app.use("/accounts", accountsRouter);
-app.use("/demo", demoReactjs);
+app.use("/transfer", transferRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  res.send("API not found");
+  res.status(404).send("API not found");
   //next(createError(404));
 });
 
@@ -53,9 +55,5 @@ app.use(function (req, res, next) {
 //   res.status(err.status || 500);
 //   res.render("error");
 // });
-
-app.listen(3000, () => {
-  console.log("App is running on port 3000");
-});
 
 module.exports = app;
