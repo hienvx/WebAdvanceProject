@@ -62,19 +62,23 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
 
     const customer = customers[0];
 
-    //create transaction history
-    await DB.Insert("transaction_history", [
-      {
-        account: customer.account,
-        type: 1,
-        amount: req.body.amount,
-        time: Date.now(),
-        fromBank: req.headers.code,
-        timeInterBank: req.headers["request-time"],
-        auth_hash: req.headers["auth-hash"],
-        pgp_sig: req.headers["pgp-sig"],
+    let log = {
+      account: customer.account,
+      amount: req.body.amount,
+      type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      performer: {
+        type: "employee",
+        account: "employeeAccount",
       },
-    ]);
+      bank: req.headers.code,
+      time: moment().unix(),
+      timeInterBank: req.headers["request-time"],
+      auth_hash: req.headers["auth-hash"],
+      pgp_sig: req.headers["pgp-sig"],
+    };
+    
+    //create transaction history
+    await DB.Insert("transaction_history", [log]);
 
     //transfer to local account
     currentBalance = parseInt(customer.paymentAccount.currentBalance);
