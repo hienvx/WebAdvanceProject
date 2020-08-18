@@ -6,6 +6,7 @@ import { Recharge } from "../Recharge/Recharge";
 import { InternalBankTransfer } from "../InternalBankTransfer/InternalBankTransfer";
 import { VerifyOTP } from "../VerifyOTP/VerifyOTP";
 import { InternalTransferFinish } from "../InternalBankTransfer/InternalTransferFinish";
+import { PartnerBankTransfer } from "../PartnerBankTransfer/PartnerBankTransfer";
 import { useDispatch, useSelector } from "react-redux";
 import {
   menuModel,
@@ -42,6 +43,11 @@ export function Menu() {
             <li>
               <NavLink activeClassName="active" to="/internalTransfer">
                 Chuyển khoản nội bộ
+              </NavLink>
+            </li>
+            <li>
+              <NavLink activeClassName="active" to="/partnerTransfer">
+                Chuyển khoản liên ngân hàng
               </NavLink>
             </li>
             <li hidden>
@@ -93,6 +99,7 @@ export function Menu() {
         <Route path="/list-accounts" component={ListAccounts} />
         <Route path="/recharge" component={Recharge} />
         <Route path="/internalTransfer" component={InternalBankTransfer} />
+        <Route path="/partnerTransfer" component={PartnerBankTransfer} />
         <Route path="/verifyOTP" component={VerifyOTP} />
         <Route path="/tranferFinish" component={InternalTransferFinish} />
       </div>

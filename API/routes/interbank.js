@@ -4,6 +4,8 @@ let DB = require("../scripts/db");
 const moment = require("moment");
 let { security } = require("./securityAPI");
 let { securityPayment } = require("./securityAPIPayment");
+const crypto = require("crypto");
+const axios = require("axios");
 
 router.get("/get-account-info", security, async (req, res, next) => {
   const numberAccount = req.query.number;
@@ -102,4 +104,35 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
   }
 });
 
+//get accounts info from KAT
+router.get("/KAT/get-account-info", async (req, res, next) => {
+  const timestamp = Date.now();
+  const secret = "HjvV0rNq1GOvnPZmNaF3";
+  const dataToHash = timestamp + secret + "{}";
+  const credit_number = req.query.credit_number;
+
+  let hashString = crypto
+    .createHash("sha256")
+    .update(dataToHash)
+    .digest("base64");
+
+  await axios
+    .get(
+      "http://bank-backend.khuedoan.com/api/partner/get-account-info?credit_number=" +
+        credit_number,
+      {
+        headers: {
+          "partner-code": "N42",
+          timestamp: timestamp,
+          "authen-hash": hashString,
+        },
+      }
+    )
+    .then((response) => {
+      return res.status(200).json(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json(error.response.data);
+    });
+});
 module.exports = router;

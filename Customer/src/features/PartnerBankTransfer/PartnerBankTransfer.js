@@ -6,11 +6,14 @@ import {
   doGetTargetNumberAccountThunk,
   doGetUserInfoThunk,
   doTransfer,
-} from "./InternalBankTransferSlice";
+} from "./PartnerBankTransferSlice";
+import { Select } from "antd";
 
 import "icheck-material/icheck-material.min.css";
 
-export function InternalBankTransfer(props) {
+const { Option } = Select;
+
+export function PartnerBankTransfer(props) {
   const dispatch = useDispatch();
   const transfer = useSelector(transferModel);
   let timer;
@@ -22,7 +25,7 @@ export function InternalBankTransfer(props) {
   return (
     <div className="card text-left" hidden={props.hidden}>
       <div className="card-header text-center">
-        <h3>CHUYỂN TIỀN CHO NGƯỜI HƯỞNG TRONG NGÂN HÀNG NỘI BỘ</h3>
+        <h3>CHUYỂN TIỀN CHO NGƯỜI HƯỞNG LIÊN NGÂN HÀNG</h3>
       </div>
       <form action="#">
         <div className="card-header">THÔNG TIN NGƯỜI CHUYỂN</div>
@@ -34,6 +37,19 @@ export function InternalBankTransfer(props) {
           <div className="card-body">
             <label className="col-3">Số dư khả dụng</label>
             <b className="col-3">{transfer.currentBalance}</b>VND
+          </div>
+        </div>
+
+        <div className="card-header">THÔNG TIN NGÂN HÀNG</div>
+        <div className="form-group">
+          <div className="card-body">
+            <label>Ngân hàng</label>
+            <div>
+              <Select placeholder="Chọn ngân hàng" onChange={(value) => {}}>
+                <Option value="KAT">Kianto Bank</Option>
+                <Option value="tckbank">TCK Bank</Option>
+              </Select>
+            </div>
           </div>
         </div>
 
