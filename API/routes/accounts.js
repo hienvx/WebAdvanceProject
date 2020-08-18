@@ -2,12 +2,12 @@ let express = require("express");
 let router = express.Router();
 let DB = require("../scripts/db");
 const moment = require("moment");
-let { security } = require("./securityAPI");
-let { securityPayment } = require("./securityAPIPayment");
+let {security} = require("./securityAPI");
+let {securityPayment} = require("./securityAPIPayment");
 /* GET users listing. */
 
 router.post("/", function (req, res, next) {
-  res.send("Test api");
+    res.send("Test api");
 });
 const AuthMiddleWare = require("../scripts/AuthMiddleware");
 const AuthController = require("../scripts/AuthController");
@@ -21,21 +21,21 @@ router.post("/Auth/logout", AuthController.logout);
 router.post("/Auth/refresh-token", AuthController.refreshToken);
 
 router.get("/UserAccount/:userAccount", async function (req, res, next) {
-  let account = req.params.userAccount;
+    let account = req.params.userAccount;
 
-  let customers = await DB.Find("customers", { account: account });
+    let customers = await DB.Find("customers", {account: account});
 
   if (customers.length == 0) {
     res.send({ status: false, message: "User is not exist", data: [] });
   }
 
-  let customer = customers[0];
-  let result = {
-    account: customer.account,
-    //"paymentAccount": customer.paymentAccount,
-    //"savingAccount": customer.savingAccount,
-    profile: customer.profile,
-  };
+    let customer = customers[0];
+    let result = {
+        account: customer.account,
+        //"paymentAccount": customer.paymentAccount,
+        //"savingAccount": customer.savingAccount,
+        profile: customer.profile,
+    };
 
   res.send({ status: true, message: "", data: result });
 });
