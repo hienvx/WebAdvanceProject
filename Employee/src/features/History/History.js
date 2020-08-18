@@ -115,7 +115,7 @@ export function History(props) {
                                    }, ms);
 
                                }}
-                               value={""}
+                              
                         />
                     </div>
 

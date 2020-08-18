@@ -75,7 +75,7 @@ export function Recharge(props) {
 
 
                                }}
-                               value={""}
+
                         />
                     </div>
 
@@ -97,7 +97,7 @@ export function Recharge(props) {
 
 
                                }}
-                               value={""}
+
                         />
                     </div>
 
