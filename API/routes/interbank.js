@@ -6,6 +6,7 @@ let { security } = require("./securityAPI");
 let { securityPayment } = require("./securityAPIPayment");
 const crypto = require("crypto");
 const axios = require("axios");
+const fs = require("fs");
 
 router.get("/get-account-info", security, async (req, res, next) => {
   const numberAccount = req.query.number;
@@ -78,7 +79,7 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
       auth_hash: req.headers["auth-hash"],
       pgp_sig: req.headers["pgp-sig"],
     };
-    
+
     //create transaction history
     await DB.Insert("transaction_history", [log]);
 
@@ -129,6 +130,57 @@ router.get("/KAT/get-account-info", async (req, res, next) => {
           "partner-code": "N42",
           timestamp: timestamp,
           "authen-hash": hashString,
+        },
+      }
+    )
+    .then((response) => {
+      return res.status(200).json(response.data);
+    })
+    .catch((error) => {
+      return res.status(500).json(error.response.data);
+    });
+});
+
+function RSASign(privateKey, data) {
+  const sign = crypto.createSign("RSA-SHA256");
+  const signature = sign.update(data).sign(privateKey, "base64");
+  console.log(signature);
+  return signature;
+}
+
+function RSAVerify(publicKey, signature, data) {
+  const verify = crypto.createVerify("RSA-SHA256");
+  verify.update(data);
+  console.log(verify.verify(publicKey, signature, "base64"));
+}
+
+//chuyen tien toi KAT
+router.post("/KAT/deposit", async (req, res, next) => {
+  const timestamp = Date.now();
+  const secret = "HjvV0rNq1GOvnPZmNaF3";
+  const dataToHash = timestamp + secret + JSON.stringify(req.body);
+  const credit_number = req.query.credit_number;
+
+  const privateKey = fs.readFileSync("./secrets/rsa/privatekey.rsa");
+  const signature = RSASign(privateKey, dataToHash);
+
+  let hashString = crypto
+    .createHash("sha256")
+    .update(dataToHash)
+    .digest("base64");
+
+  await axios
+    .post(
+      "http://bank-backend.khuedoan.com/api/partner/deposit",
+      {
+        ...req.body,
+      },
+      {
+        headers: {
+          "partner-code": "N42",
+          timestamp: timestamp,
+          "authen-hash": hashString,
+          "authen-sig": signature.toString(),
         },
       }
     )

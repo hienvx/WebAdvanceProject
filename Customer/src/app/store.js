@@ -6,7 +6,8 @@ import historySlice from "../features/History/HistorySlice";
 import rechargeSlice from "../features/Recharge/RechargeSlice";
 import loginSlice from "../features/Login/LoginSlice";
 import internalBankTransferSlice from "../features/InternalBankTransfer/InternalBankTransferSlice";
-import verifyOTPSlice from "../features/VerifyOTP/VerifyOTPSlice"
+import partnerBankTransferSlice from "../features/PartnerBankTransfer/PartnerBankTransferSlice";
+import verifyOTPSlice from "../features/VerifyOTP/VerifyOTPSlice";
 
 export default configureStore({
   reducer: {
@@ -15,8 +16,9 @@ export default configureStore({
     customerAccount: customerAccount,
     historySlice: historySlice,
     rechargeSlice: rechargeSlice,
-	loginSlice: loginSlice,
-	internalBankTransferSlice: internalBankTransferSlice,
-	verifyOTPSlice: verifyOTPSlice
+    loginSlice: loginSlice,
+    internalBankTransferSlice: internalBankTransferSlice,
+    partnerBankTransferSlice: partnerBankTransferSlice,
+    verifyOTPSlice: verifyOTPSlice,
   },
 });
