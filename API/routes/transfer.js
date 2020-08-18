@@ -292,12 +292,12 @@ router.post("/confirm-tranfer", async function (req, res, next) {
   });
 
   let log = {
-    account: transfer.account,
+    account: customer_info.paymentAccount.numberAccount,
     amount: String(otp_info.transfer_amount),
     type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
     performer: {
       type: "customer",
-      account: "customerAccount",
+      account: customer_info.paymentAccount.numberAccount,
     },
     bank: "N42",
     time: moment().unix(),
