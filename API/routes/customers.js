@@ -223,6 +223,7 @@ router.get("/getUserDetail", async (req, res, next) => {
             profile: userDetail[0].profile,
             paymentAccount: userDetail[0].paymentAccount,
             savingAccount: userDetail[0].savingAccount,
+            contactList: userDetail[0].contactList || [],
             status: true,
           });
         } else {
@@ -435,8 +436,11 @@ router.get("/getNumberAccount/:userName", async (req, res) => {
 
 router.post("/addcontact", async (req, res) => {
   const myNumberAccount = req.body.myNumberAccount;
+  console.log("myNumberAccount", myNumberAccount);
   const numberAccount = req.body.numberAccount; //so tao khoan de add vao
+  console.log("numberAccount", numberAccount);
   const name = req.body.name; // ten goi nho
+  console.log("name", name);
 
   //validate
   if (!numberAccount)
@@ -450,13 +454,6 @@ router.post("/addcontact", async (req, res) => {
   let customers = await DB.Find("customers", {
     "paymentAccount.numberAccount": myNumberAccount,
   });
-
-  let contactCustomers = await DB.Find("customers", {
-    "paymentAccount.numberAccount": numberAccount,
-  });
-
-  if (contactCustomers.length <= 0)
-    return res.status(500).json({ message: "numberAccount is not found" });
 
   //process
   if (customers.length > 0) {
@@ -514,12 +511,6 @@ router.post("/updatecontact", async (req, res) => {
       "paymentAccount.numberAccount": myNumberAccount,
     });
 
-    let contactCustomers = await DB.Find("customers", {
-      "paymentAccount.numberAccount": numberAccount,
-    });
-
-    if (contactCustomers.length <= 0)
-      return res.status(500).json({ message: "numberAccount is not found" });
     if (!customers[0].contactList)
       return res.status(500).json({ message: "numberAccount is not found" });
 
@@ -558,7 +549,9 @@ router.post("/updatecontact", async (req, res) => {
 router.post("/deletecontact", async (req, res) => {
   try {
     const myNumberAccount = req.body.myNumberAccount;
+    console.log("myNumberAccount", myNumberAccount);
     const numberAccount = req.body.numberAccount; //so tao khoan de add vao
+    console.log("numberAccount", numberAccount);
 
     //validate
     if (!numberAccount)
@@ -574,12 +567,6 @@ router.post("/deletecontact", async (req, res) => {
       "paymentAccount.numberAccount": myNumberAccount,
     });
 
-    let contactCustomers = await DB.Find("customers", {
-      "paymentAccount.numberAccount": numberAccount,
-    });
-
-    if (contactCustomers.length <= 0)
-      return res.status(500).json({ message: "numberAccount is not found" });
     if (!customers[0].contactList)
       return res.status(500).json({ message: "numberAccount is not found" });
 
