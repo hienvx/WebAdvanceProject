@@ -45,7 +45,17 @@ export function PartnerBankTransfer(props) {
           <div className="card-body">
             <label>Ngân hàng</label>
             <div>
-              <Select placeholder="Chọn ngân hàng" onChange={(value) => {}}>
+              <Select
+                placeholder="Chọn ngân hàng"
+                onChange={(value) => {
+                  dispatch(
+                    updateValue({
+                      value: value,
+                      option: ["bank"],
+                    })
+                  );
+                }}
+              >
                 <Option value="KAT">Kianto Bank</Option>
                 <Option value="tckbank">TCK Bank</Option>
               </Select>

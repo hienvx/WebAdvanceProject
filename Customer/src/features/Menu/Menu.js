@@ -50,6 +50,12 @@ export function Menu() {
                 Chuyển khoản liên ngân hàng
               </NavLink>
             </li>
+
+            <li>
+              <NavLink activeClassName="active" to="/history">
+                Lịch sử giao dịch
+              </NavLink>
+            </li>
             <li hidden>
               <NavLink to="/verifyOTP"></NavLink>
             </li>
@@ -102,6 +108,7 @@ export function Menu() {
         <Route path="/partnerTransfer" component={PartnerBankTransfer} />
         <Route path="/verifyOTP" component={VerifyOTP} />
         <Route path="/tranferFinish" component={InternalTransferFinish} />
+        <Route path="/history" component={History} />
       </div>
     </div>
   );

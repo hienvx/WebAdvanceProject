@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 const axios = require('axios').default;
+let moment = require('moment');
 
 export const doGetHistoryTransactionThunk = createAsyncThunk(
     'doGetHistoryTransactionThunk',
@@ -22,6 +23,9 @@ let getHistoryTransaction = function (state) {
             condition: {
                 account: {'$regex': state.filter},
                 type: parseInt(state.type),
+                time:{
+                    $gte: moment().unix() - 30*24*60*60,
+                }
             },
             sort: {time: -1},
             limit: state.limit,
@@ -38,7 +42,7 @@ export const historySlice = createSlice({
     initialState: {
         dataUserAccount: [],
         userAccountFilter: {
-            filter: "",
+            filter: "null",
             type: "0",
             limit: 10,
             skip: 0
