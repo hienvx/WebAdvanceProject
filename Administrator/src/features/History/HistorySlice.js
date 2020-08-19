@@ -4,7 +4,7 @@ const axios = require('axios').default;
 let moment = require('moment');
 
 let date = moment();
-let dateEnd = date.format("yyyy-MM-DD");
+let dateEnd = date.add(1,"days").format("yyyy-MM-DD");
 let dateStart = date.clone().startOf('month').format("yyyy-MM-DD");
 
 let getData = async function (state) {

@@ -68,12 +68,12 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
     let log = {
       account: customer.account,
       amount: req.body.amount,
-      type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
-        type: "employee",
-        account: "employeeAccount",
+        type: "customer",
+        account: "external",
       },
-      bank: req.headers.code,
+      bank: req.headers.code || "N42",
       time: moment().unix(),
       timeInterBank: req.headers["request-time"],
       auth_hash: req.headers["auth-hash"],
