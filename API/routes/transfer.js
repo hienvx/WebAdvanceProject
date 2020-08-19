@@ -424,7 +424,7 @@ router.post("/confirm-tranfer", async function (req, res, next) {
   let log = {
     account: customer_info.paymentAccount.numberAccount,
     amount: String(otp_info.transfer_amount),
-    type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+    type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
     performer: {
       type: "customer",
       account: customer_info.paymentAccount.numberAccount,
