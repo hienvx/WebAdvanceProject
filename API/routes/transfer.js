@@ -419,6 +419,7 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     "paymentAccount.numberAccount": otp_info.target_transfer_id,
   });
 
+  // Ghi history cho người gửi
   let log = {
     account: customer_info.paymentAccount.numberAccount,
     amount: String(otp_info.transfer_amount),
@@ -431,6 +432,21 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     time: moment().unix(),
   };
   await DB.Insert("transaction_history", [log]);
+
+  // Ghi history cho người nhận
+  log = {
+    account: target_transfer_info.paymentAccount.numberAccount,
+    amount: String(otp_info.transfer_amount),
+    type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+    performer: {
+      type: "customer",
+      account: customer_info.paymentAccount.numberAccount,
+    },
+    bank: otp_info.target_transfer_bank || "N42",
+    time: moment().unix(),
+  };
+  await DB.Insert("transaction_history", [log]);
+
   res.status(200).json({ status: result, message: "Giao dịch thành công" });
 });
 
