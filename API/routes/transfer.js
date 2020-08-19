@@ -389,42 +389,108 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     "paymentAccount.numberAccount": otp_info.customer_payment_id,
   });
 
-  if (
-    otp_info.target_transfer_bank !== "KAT" &&
-    otp_info.target_transfer_bank !== "TCK"
-  ) {
-    // Lấy thông tin người hưởng
-    result = await DB.Find("customers", {
-      "paymentAccount.numberAccount": otp_info.target_transfer_id,
+  // Lấy thông tin người hưởng
+  result = await DB.Find("customers", {
+    "paymentAccount.numberAccount": otp_info.target_transfer_id,
+  });
+  if (result.length == 0) {
+    res.status(401).json({
+      status: false,
+      message: "Không tìm thấy người nhận",
     });
-    if (result.length == 0) {
-      res.status(401).json({
-        status: false,
-        message: "Không tìm thấy người nhận",
-      });
-      return;
-    }
-    const target_transfer_info = result[0];
-
-    // Chuyển tiền
-    const balance =
-      parseInt(target_transfer_info.paymentAccount.currentBalance) +
-      parseInt(otp_info.transfer_amount);
-    data = {
-      paymentAccount: {
-        numberAccount: target_transfer_info.paymentAccount.numberAccount,
-        currentBalance: balance,
-      },
-    };
-    result = await DB.Update("customers", data, {
-      "paymentAccount.numberAccount": otp_info.target_transfer_id,
-    });
+    return;
   }
+  const target_transfer_info = result[0];
+
+  // Chuyển tiền
+  const balance =
+    parseInt(target_transfer_info.paymentAccount.currentBalance) +
+    parseInt(otp_info.transfer_amount);
+  data = {
+    paymentAccount: {
+      numberAccount: target_transfer_info.paymentAccount.numberAccount,
+      currentBalance: balance,
+    },
+  };
+  result = await DB.Update("customers", data, {
+    "paymentAccount.numberAccount": otp_info.target_transfer_id,
+  });
 
   let log = {
     account: customer_info.paymentAccount.numberAccount,
     amount: String(otp_info.transfer_amount),
-    type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+    type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+    performer: {
+      type: "customer",
+      account: customer_info.paymentAccount.numberAccount,
+    },
+    bank: otp_info.target_transfer_bank || "N42",
+    time: moment().unix(),
+  };
+  await DB.Insert("transaction_history", [log]);
+  res.status(200).json({ status: result, message: "Giao dịch thành công" });
+});
+
+router.post("/interbank/confirm-tranfer", async function (req, res, next) {
+  const otpId = req.body.otpId;
+  const otp = req.body.otp;
+  let result;
+
+  // Lấy thông tin otp
+  let objOtpId = new ObjectId(otpId);
+  result = await DB.Find("otp", { _id: objOtpId });
+  if (result.length == 0) {
+    res.status(401).json({
+      status: false,
+      message: "Không tồn tại Giao dịch",
+    });
+    return;
+  }
+  const otp_info = result[0];
+
+  // Xác minh OTP
+  verifyOTP(otp_info, otp);
+
+  // Lấy thông tin người chuyển
+  result = await DB.Find("customers", {
+    "paymentAccount.numberAccount": otp_info.customer_payment_id,
+  });
+  let transfer = result;
+  if (result.length == 0) {
+    res.status(401).json({
+      status: false,
+      message: "Người dùng không tồn tại",
+    });
+    return;
+  }
+  const customer_info = result[0];
+
+  // Kiểm tra số dư
+  const curBal = parseInt(customer_info.paymentAccount.currentBalance);
+  const paidRemain = curBal - parseInt(otp_info.transfer_amount);
+  if (curBal < 50000 || paidRemain < 50000) {
+    res.status(401).json({
+      status: false,
+      message: "Số dư không đủ",
+    });
+    return;
+  }
+
+  // Trừ tiền
+  data = {
+    paymentAccount: {
+      numberAccount: customer_info.paymentAccount.numberAccount,
+      currentBalance: paidRemain,
+    },
+  };
+  result = await DB.Update("customers", data, {
+    "paymentAccount.numberAccount": otp_info.customer_payment_id,
+  });
+
+  let log = {
+    account: customer_info.paymentAccount.numberAccount,
+    amount: String(otp_info.transfer_amount),
+    type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
     performer: {
       type: "customer",
       account: customer_info.paymentAccount.numberAccount,

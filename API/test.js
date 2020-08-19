@@ -1,44 +1,52 @@
-const crypto = require("crypto");
 const axios = require("axios");
+const MD5 = require("crypto-js/md5");
+const SHA256 = require("crypto-js/sha256");
+const openpgp = require("openpgp");
 const fs = require("fs");
 
-function RSASign(privateKey, data) {
-  const sign = crypto.createSign("RSA-SHA256");
-  const signature = sign.update(data).sign(privateKey, "base64");
-  console.log(signature);
-  return signature;
-}
+const signPGP = async () => {
+  const privateKeyArmored = fs.readFileSync("./secrets/pgp/privatekey.gpg"); //file privatekey path
+  const passphrase = fs.readFileSync("./secrets/pgp/passphrase.txt"); // file passphrase path
 
-const timestamp = Date.now();
-const secret = "HjvV0rNq1GOvnPZmNaF3";
-const dataToHash =
-  timestamp + secret + '{"credit_number":"565572661049","amount":200000}';
-const credit_number = 565572661049;
+  const {
+    keys: [privateKey],
+  } = await openpgp.key.readArmored(privateKeyArmored);
+  await privateKey.decrypt(passphrase);
 
-const privateKey = fs.readFileSync("./secrets/rsa/privatekey.rsa");
-const signature = RSASign(privateKey, dataToHash);
-
-let hashString = crypto
-  .createHash("sha256")
-  .update(dataToHash)
-  .digest("base64");
-
-axios
-  .post(
-    "http://bank-backend.khuedoan.com/api/partner/deposit",
-    { credit_number: "565572661049", amount: 200000 },
-    {
-      headers: {
-        "partner-code": "N42",
-        timestamp: timestamp,
-        "authen-hash": hashString.toString(),
-        "authen-sig": signature.toString(),
-      },
-    }
-  )
-  .then((response) => {
-    console.log("response", response.data);
-  })
-  .catch((error) => {
-    console.log("error", error.response.data);
+  const { signature: detachedSignature } = await openpgp.sign({
+    message: openpgp.cleartext.fromText("Hello, World!"), // CleartextMessage or Message object
+    privateKeys: [privateKey], // for signing
+    detached: true,
   });
+  return detachedSignature; // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
+};
+
+const deposit = async () => {
+  const pgp_sig = (await signPGP()).toString();
+  const headers = {
+    code: "tckbank", //code bank
+    "request-time": Date.now(),
+  };
+
+  const data = {};
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/interbank/get-account-info?number=1593765471",
+      {
+        headers: {
+          ...headers,
+          "auth-hash": SHA256(
+            data + headers["request-time"] + "tck@bank"
+          ).toString(),
+        },
+      }
+    );
+    console.log("deposit -> response.data", response.data);
+    return response.data;
+  } catch (error) {
+    console.log("deposit -> error.response.data", error.response.data);
+    return error.response.data;
+  }
+};
+
+deposit();

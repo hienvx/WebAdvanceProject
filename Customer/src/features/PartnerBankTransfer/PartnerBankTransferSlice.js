@@ -57,12 +57,10 @@ export const doGetTargetNumberAccountThunk = createAsyncThunk(
     const response = await getNumberAccount(
       thunkAPI.getState().partnerBankTransferSlice
     );
-    const fullname = response.data.lastname + " " + response.data.firstname;
-    console.log("fullname", fullname);
     if (response.status === 200) {
       thunkAPI.dispatch(
         updateValue({
-          value: fullname,
+          value: response.data.name,
           option: ["targetFullName"],
         })
       );

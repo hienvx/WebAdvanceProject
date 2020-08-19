@@ -3,13 +3,15 @@ const axios = require("axios");
 const SHA256 = require("crypto-js/sha256");
 const AssociatedBank = require("../secrets/associated-bank.json");
 
+jest.setTimeout(30000);
+
 /**
  * describe is jest specific function
  * name of the object as string for which the test is written
  * function that will define a series of tests
  */
 describe("security for KAT", () => {
-  const host = process.env.HOST || "https://nhom42bank.herokuapp.com/";
+  const host = process.env.HOST || "https://nhom42bank.herokuapp.com";
   const secret_key = AssociatedBank["KAT"].secretKey;
 
   const client = axios.create({
@@ -95,6 +97,7 @@ describe("security for TCK", () => {
         },
       })
       .then((res) => {
+        console.log("res", res);
         expect(res.status).toEqual(200);
       })
       .catch((err) => {

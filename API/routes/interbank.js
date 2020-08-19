@@ -134,6 +134,24 @@ router.get("/KAT/get-account-info", async (req, res, next) => {
       }
     )
     .then((response) => {
+      return res
+        .status(200)
+        .json({ name: response.data.lastname + " " + response.data.firstname });
+    })
+    .catch((error) => {
+      return res.status(500).json(error.response.data);
+    });
+});
+
+//get accounts info from TCK
+router.get("/tckbank/get-account-info", async (req, res, next) => {
+  const credit_number = req.query.credit_number;
+  console.log("credit_number", credit_number);
+  await axios
+    .post("https://tckbank.herokuapp.com/deposits/account_number", {
+      account_number: credit_number,
+    })
+    .then((response) => {
       return res.status(200).json(response.data);
     })
     .catch((error) => {
