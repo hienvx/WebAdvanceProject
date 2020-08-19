@@ -80,17 +80,11 @@ router.post("/transfer-fund", async function (req, res, next) {
 
   // Lưu vào bảng OTP
   let stringOTP = randomstring.generate({ length: 6, charset: "numeric" });
-  let transfer_fee;
-  if (fee_payer == 0) {
-    transfer_fee = parseInt(config.transfer_fee);
-  } else {
-    transfer_fee = 0;
-  }
   let otp = {
     customer_payment_id: customer_info.paymentAccount.numberAccount,
     target_transfer_id: target_transfer_info.paymentAccount.numberAccount,
     target_transfer_name: target_transfer_info.profile.fullName,
-    transfer_amount: transfer_amount + transfer_fee,
+    transfer_amount: transfer_amount,
     transfer_detail: transfer_detail,
     otp: stringOTP,
     fee_payer: fee_payer,
@@ -323,6 +317,7 @@ const verifyOTP = async (otp_info, otp) => {
 
   // Cập nhật lại status = true
   let data = { status: true };
+  let objOtpId = new ObjectId(otp_info._id);
   result = await DB.Update("otp", data, { _id: objOtpId });
   if (!result) {
     res.status(401).json({
@@ -378,11 +373,19 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     return;
   }
 
+  // Lấy phí giao dịch
+  let transfer_fee;
+  if (otp_info.fee_payer == 0) {
+    transfer_fee = parseInt(config.transfer_fee);
+  } else {
+    transfer_fee = 0;
+  }
+
   // Trừ tiền
   data = {
     paymentAccount: {
       numberAccount: customer_info.paymentAccount.numberAccount,
-      currentBalance: paidRemain,
+      currentBalance: paidRemain + transfer_fee,
     },
   };
   result = await DB.Update("customers", data, {
