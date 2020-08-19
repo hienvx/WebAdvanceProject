@@ -5,10 +5,10 @@ import Pagination from "react-bootstrap/Pagination";
 import { Button, Modal, Form, Input, Radio, Select } from "antd";
 import "antd/dist/antd.css";
 import {
-  doGetListAccountsThunk,
+  doGetListReceiverThunk,
   listAccountsModel,
   updateValue,
-} from "./ListAccountsSlice";
+} from "./ListReceiverSlice";
 import axios from "axios";
 
 const { Option } = Select;
@@ -54,7 +54,7 @@ export const LoadingIndicator = (props) => {
   );
 };
 
-export function ListAccounts(props) {
+export function ListReceiver(props) {
   const dispatch = useDispatch();
   const listAccounts = useSelector(listAccountsModel);
   let timer;
@@ -101,7 +101,7 @@ export function ListAccounts(props) {
   };
 
   if (listAccounts.isStart) {
-    dispatch(doGetListAccountsThunk());
+    dispatch(doGetListReceiverThunk());
   }
 
   return (
@@ -221,7 +221,7 @@ export function ListAccounts(props) {
                       dispatch(
                         updateValue({ value: 1, option: ["currentPage"] })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   />
                   <Pagination.Prev
@@ -232,7 +232,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   />
                   <Pagination.Ellipsis disabled={true} hidden={true} />
@@ -246,7 +246,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   >
                     {listAccounts.currentPage - 1}
@@ -263,7 +263,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   >
                     {listAccounts.currentPage + 1}
@@ -279,7 +279,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   >
                     {listAccounts.totalPage}
@@ -292,7 +292,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   />
                   <Pagination.Last
@@ -303,7 +303,7 @@ export function ListAccounts(props) {
                           option: ["currentPage"],
                         })
                       );
-                      dispatch(doGetListAccountsThunk());
+                      dispatch(doGetListReceiverThunk());
                     }}
                   />
                 </Pagination>

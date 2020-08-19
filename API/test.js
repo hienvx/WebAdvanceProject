@@ -49,4 +49,4 @@ const deposit = async () => {
   }
 };
 
-deposit();
+console.log(SHA256({} + 1597854743555 + "_(5KmP*YcTM(@?:").toString());

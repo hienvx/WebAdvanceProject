@@ -70,10 +70,10 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
       amount: req.body.amount,
       type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
-        type: "customer",
-        account: "external",
+        type: "employee",
+        account: "employeeAccount",
       },
-      bank: req.headers.code || "N42",
+      bank: req.headers.code,
       time: moment().unix(),
       timeInterBank: req.headers["request-time"],
       auth_hash: req.headers["auth-hash"],

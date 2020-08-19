@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const axios = require("axios").default;
 
-export const doGetListAccountsThunk = createAsyncThunk(
-  "doGetListAccountsThunk",
+export const doGetListReceiverThunk = createAsyncThunk(
+  "doGetListReceiverThunk",
   async (data, thunkAPI) => {
     thunkAPI.dispatch(updateValue({ value: false, option: ["isStart"] }));
     thunkAPI.dispatch(updateValue({ value: true, option: ["isLoading"] }));
 
-    let dataUserSavingAccounts = await getListAccounts(
+    let dataUserSavingAccounts = await getListReceiver(
       thunkAPI.getState().listAccountsSlice.userAccountFilter
     );
 
@@ -35,7 +35,7 @@ export const doGetListAccountsThunk = createAsyncThunk(
   }
 );
 
-let getListAccounts = function (state) {
+let getListReceiver = function (state) {
   return axios
     .get("http://localhost:3000/customers/getSavingAccounts", {
       headers: {
@@ -111,7 +111,7 @@ export const listAccountsSlice = createSlice({
   },
   extraReducers: {
     // Add reducers for additional action types here, and handle loading state as needed
-    [doGetListAccountsThunk.fulfilled]: (state, action) => {
+    [doGetListReceiverThunk.fulfilled]: (state, action) => {
       // Add user to the state array
       /*state.entities.push(action.payload)*/
     },

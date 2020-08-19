@@ -286,7 +286,7 @@ router.get("/get-otp-detail/:otpId", async function (req, res, next) {
   res.status(200).json({ status: true, message: "", data: result });
 });
 
-const verifyOTP = async (otp_info, otp) => {
+const verifyOTP = async (res, otp_info, otp) => {
   // Kiểm tra status của otp. true: đã sử dụng, false: chưa sử dụng
   if (otp_info.status == true) {
     res.status(401).json({
@@ -346,7 +346,7 @@ router.post("/confirm-tranfer", async function (req, res, next) {
   const otp_info = result[0];
 
   // Xác minh OTP
-  verifyOTP(otp_info, otp);
+  verifyOTP(res, otp_info, otp);
 
   // Lấy thông tin người chuyển
   result = await DB.Find("customers", {
@@ -435,91 +435,81 @@ router.post("/confirm-tranfer", async function (req, res, next) {
 });
 
 router.post("/interbank/confirm-tranfer", async function (req, res, next) {
-  const otpId = req.body.otpId;
-  const otp = req.body.otp;
-  let result;
+  try {
+    const otpId = req.body.otpId;
+    const otp = req.body.otp;
+    let result;
 
-  // Lấy thông tin otp
-  let objOtpId = new ObjectId(otpId);
-  result = await DB.Find("otp", { _id: objOtpId });
-  if (result.length == 0) {
-    res.status(401).json({
-      status: false,
-      message: "Không tồn tại Giao dịch",
+    // Lấy thông tin otp
+    let objOtpId = new ObjectId(otpId);
+    result = await DB.Find("otp", { _id: objOtpId });
+    if (result.length == 0) {
+      res.status(401).json({
+        status: false,
+        message: "Không tồn tại Giao dịch",
+      });
+      return;
+    }
+    const otp_info = result[0];
+
+    // Xác minh OTP
+    verifyOTP(res, otp_info, otp);
+
+    // Lấy thông tin người chuyển
+    result = await DB.Find("customers", {
+      "paymentAccount.numberAccount": otp_info.customer_payment_id,
     });
-    return;
-  }
-  const otp_info = result[0];
+    let transfer = result;
+    if (result.length == 0) {
+      res.status(401).json({
+        status: false,
+        message: "Người dùng không tồn tại",
+      });
+      return;
+    }
+    const customer_info = result[0];
 
-  // Xác minh OTP
-  verifyOTP(otp_info, otp);
+    // Kiểm tra số dư
+    const curBal = parseInt(customer_info.paymentAccount.currentBalance);
+    const paidRemain = curBal - parseInt(otp_info.transfer_amount);
+    if (curBal < 50000 || paidRemain < 50000) {
+      res.status(401).json({
+        status: false,
+        message: "Số dư không đủ",
+      });
+      return;
+    }
 
-  // Lấy thông tin người chuyển
-  result = await DB.Find("customers", {
-    "paymentAccount.numberAccount": otp_info.customer_payment_id,
-  });
-  let transfer = result;
-  if (result.length == 0) {
-    res.status(401).json({
-      status: false,
-      message: "Người dùng không tồn tại",
+    // Trừ tiền
+    data = {
+      paymentAccount: {
+        numberAccount: customer_info.paymentAccount.numberAccount,
+        currentBalance: paidRemain,
+      },
+    };
+    result = await DB.Update("customers", data, {
+      "paymentAccount.numberAccount": otp_info.customer_payment_id,
     });
-    return;
-  }
-  const customer_info = result[0];
 
-  // Kiểm tra số dư
-  const curBal = parseInt(customer_info.paymentAccount.currentBalance);
-  const paidRemain = curBal - parseInt(otp_info.transfer_amount);
-  if (curBal < 50000 || paidRemain < 50000) {
-    res.status(401).json({
-      status: false,
-      message: "Số dư không đủ",
-    });
-    return;
-  }
-
-  // Trừ tiền
-  data = {
-    paymentAccount: {
-      numberAccount: customer_info.paymentAccount.numberAccount,
-      currentBalance: paidRemain,
-    },
-  };
-  result = await DB.Update("customers", data, {
-    "paymentAccount.numberAccount": otp_info.customer_payment_id,
-  });
-
-  let log = {
-    account: customer_info.paymentAccount.numberAccount,
-    amount: String(otp_info.transfer_amount),
-    type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
-<<<<<<< HEAD
-=======
-    performer: {
-      type: "customer",
+    log = {
       account: customer_info.paymentAccount.numberAccount,
-    },
-    bank: otp_info.target_transfer_bank || "N42",
-    time: moment().unix(),
-  };
-  await DB.Insert("transaction_history", [log]);
+      amount: String(otp_info.transfer_amount),
+      type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      performer: {
+        type: "customer",
+        account: customer_info.paymentAccount.numberAccount,
+      },
+      bank: otp_info.target_transfer_bank || "N42",
+      time: moment().unix(),
+    };
+    console.log("log", log);
+    await DB.Insert("transaction_history", [log]);
 
-  log = {
-    account: target_transfer_info.paymentAccount.numberAccount,
-    amount: String(otp_info.transfer_amount),
-    type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
->>>>>>> 60b3d8514abe175181914c4cfb9b28758c7ac421
-    performer: {
-      type: "customer",
-      account: customer_info.paymentAccount.numberAccount,
-    },
-    bank: otp_info.target_transfer_bank || "N42",
-    time: moment().unix(),
-  };
-  await DB.Insert("transaction_history", [log]);
-
-  res.status(200).json({ status: result, message: "Giao dịch thành công" });
+    res.status(200).json({ status: result, message: "Giao dịch thành công" });
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).send(error);
+  }
 });
 
 module.exports = router;

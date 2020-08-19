@@ -120,7 +120,7 @@ describe("security for TCK", () => {
 
     const data = {
       numberAccount: 1593765471,
-      amount: 1000,
+      amount: 100000,
     };
 
     await client
@@ -140,6 +140,7 @@ describe("security for TCK", () => {
         }
       )
       .then((res) => {
+        console.log("res", res.data);
         expect(res.status).toEqual(200);
       })
       .catch((err) => {

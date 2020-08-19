@@ -63,6 +63,7 @@ const securityPayment = async function (req, res, next) {
     signature = await openpgp.signature.readArmored(pgp_sig);
     publicKeys = await openpgp.key.readArmored(publicKeyArmored);
   } catch (err) {
+    console.log("err", err);
     return res.status(403).send({
       status: 403,
       message: err.toString(),

@@ -103,7 +103,7 @@ export const doTransfer = createAsyncThunk(
     if (response.status) {
       // Go to verify otp page
       localStorage.setItem("otp_id", response.otp_id);
-      window.location = "/verifyOTP";
+      window.location = "/verifyOTPInterBank";
     } else {
       thunkAPI.dispatch(
         updateValue({ value: response.message, option: ["message"] })
