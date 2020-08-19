@@ -134,7 +134,7 @@ router.post("/payment/NumberAccount", async function (req, res, next) {
   let numberAccount = req.body.data.numberAccount;
   let amount = req.body.data.amount;
   let employeeAccount = req.body.data.employeeAccount;
-  let bank = req.body.data.bank || "KAT";
+  let bank = req.body.data.bank || "N42";
 
   let customers = await DB.Find("customers", {
     "paymentAccount.numberAccount": numberAccount,
@@ -170,7 +170,7 @@ router.post("/payment/NumberAccount", async function (req, res, next) {
         type: "employee",
         account: employeeAccount,
       },
-      bank: bank,
+      bank: bank || "N42",
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
