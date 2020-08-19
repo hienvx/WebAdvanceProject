@@ -80,17 +80,11 @@ router.post("/transfer-fund", async function (req, res, next) {
 
   // Lưu vào bảng OTP
   let stringOTP = randomstring.generate({ length: 6, charset: "numeric" });
-  let transfer_fee;
-  if (fee_payer == 0) {
-    transfer_fee = parseInt(config.transfer_fee);
-  } else {
-    transfer_fee = 0;
-  }
   let otp = {
     customer_payment_id: customer_info.paymentAccount.numberAccount,
     target_transfer_id: target_transfer_info.paymentAccount.numberAccount,
     target_transfer_name: target_transfer_info.profile.fullName,
-    transfer_amount: transfer_amount + transfer_fee,
+    transfer_amount: transfer_amount,
     transfer_detail: transfer_detail,
     otp: stringOTP,
     fee_payer: fee_payer,
@@ -323,6 +317,7 @@ const verifyOTP = async (otp_info, otp) => {
 
   // Cập nhật lại status = true
   let data = { status: true };
+  let objOtpId = new ObjectId(otp_info._id);
   result = await DB.Update("otp", data, { _id: objOtpId });
   if (!result) {
     res.status(401).json({
@@ -378,11 +373,19 @@ router.post("/confirm-tranfer", async function (req, res, next) {
     return;
   }
 
+  // Lấy phí giao dịch
+  let transfer_fee;
+  if (otp_info.fee_payer == 0) {
+    transfer_fee = parseInt(config.transfer_fee);
+  } else {
+    transfer_fee = 0;
+  }
+
   // Trừ tiền
   data = {
     paymentAccount: {
       numberAccount: customer_info.paymentAccount.numberAccount,
-      currentBalance: paidRemain,
+      currentBalance: paidRemain + transfer_fee,
     },
   };
   result = await DB.Update("customers", data, {
@@ -491,6 +494,8 @@ router.post("/interbank/confirm-tranfer", async function (req, res, next) {
     account: customer_info.paymentAccount.numberAccount,
     amount: String(otp_info.transfer_amount),
     type: 0, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+<<<<<<< HEAD
+=======
     performer: {
       type: "customer",
       account: customer_info.paymentAccount.numberAccount,
@@ -499,6 +504,21 @@ router.post("/interbank/confirm-tranfer", async function (req, res, next) {
     time: moment().unix(),
   };
   await DB.Insert("transaction_history", [log]);
+
+  log = {
+    account: target_transfer_info.paymentAccount.numberAccount,
+    amount: String(otp_info.transfer_amount),
+    type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+>>>>>>> 60b3d8514abe175181914c4cfb9b28758c7ac421
+    performer: {
+      type: "customer",
+      account: customer_info.paymentAccount.numberAccount,
+    },
+    bank: otp_info.target_transfer_bank || "N42",
+    time: moment().unix(),
+  };
+  await DB.Insert("transaction_history", [log]);
+
   res.status(200).json({ status: result, message: "Giao dịch thành công" });
 });
 
