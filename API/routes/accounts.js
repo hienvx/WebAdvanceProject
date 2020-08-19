@@ -100,14 +100,14 @@ router.post("/payment/Account", async function (req, res, next) {
   );
   if (status) {
     let log = {
-      account: customer.account,
+      account: customer.paymentAccount.numberAccount,
       amount: amount,
       type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
         type: "employee",
         account: employeeAccount,
       },
-      bank: bank,
+      bank: bank || "N42",
       time: moment().unix(),
     };
     await DB.Insert("transaction_history", [log]);
@@ -163,7 +163,7 @@ router.post("/payment/NumberAccount", async function (req, res, next) {
   );
   if (status) {
     let log = {
-      account: account,
+      account: customer.paymentAccount.numberAccount,
       amount: amount,
       type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
