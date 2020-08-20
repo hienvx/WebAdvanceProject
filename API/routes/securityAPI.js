@@ -19,6 +19,7 @@ const security = function (req, res, next) {
   console.log("security -> code", code);
   const requestTime = req.headers["request-time"];
   const auth_hash = req.headers["auth-hash"];
+  console.log("security -> auth_hash", auth_hash);
 
   //Bank request have added in list?
   if (!AssociatedBank[code])
@@ -35,9 +36,6 @@ const security = function (req, res, next) {
     });
 
   //Check original package
-  console.log(
-    SHA256(req.body + requestTime + AssociatedBank[code].secretKey).toString()
-  );
   if (
     SHA256(
       req.body + requestTime + AssociatedBank[code].secretKey

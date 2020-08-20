@@ -46,7 +46,7 @@ export function VerifyOTP(props) {
 					<div className="card-body">
 						<label className="col-3">Loại phí</label>
 						<b className="col-3">
-							{otp.currentBalance === 0
+							{otp.feePayer === 0
 								? 'Người chuyển trả'
 								: 'Người nhận trả'}
 						</b>

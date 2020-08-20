@@ -20,7 +20,7 @@ function RowItem(props) {
             <td>{props.data.bank}</td>
             <td>{typeTransaction[props.data.type]}</td>
             <td>{props.data.amount}</td>
-            <td>{moment(props.data.time * 1000).format("DD-MM-YYYY")}</td>
+            <td>{moment(props.data.time * 1000).format("DD-MM-YYYY HH:mm:ss")}</td>
         </tr>
     );
 }

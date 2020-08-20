@@ -68,7 +68,7 @@ router.post("/deposit", securityPayment, async (req, res, next) => {
     let log = {
       account: customer.account,
       amount: req.body.amount,
-      type: 1, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
+      type: 3, // "Nạp tiền" : ["Chuyển khoản", "Nạp tiền", "Rút tiền", "Nhận tiền"]
       performer: {
         type: "employee",
         account: "employeeAccount",
@@ -133,6 +133,24 @@ router.get("/KAT/get-account-info", async (req, res, next) => {
         },
       }
     )
+    .then((response) => {
+      return res
+        .status(200)
+        .json({ name: response.data.lastname + " " + response.data.firstname });
+    })
+    .catch((error) => {
+      return res.status(500).json(error.response.data);
+    });
+});
+
+//get accounts info from TCK
+router.get("/tckbank/get-account-info", async (req, res, next) => {
+  const credit_number = req.query.credit_number;
+  console.log("credit_number", credit_number);
+  await axios
+    .post("https://tckbank.herokuapp.com/deposits/account_number", {
+      account_number: credit_number,
+    })
     .then((response) => {
       return res.status(200).json(response.data);
     })

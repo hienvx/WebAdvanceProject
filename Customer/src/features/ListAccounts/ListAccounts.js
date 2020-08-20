@@ -35,7 +35,7 @@ function Items(props) {
         </tr>
       </thead>
       <tbody>
-        {data
+        {data.length>0
           ? data.map((value, index) => {
               return <RowItem stt={index + 1} data={value} key={index + 1} />;
             })

@@ -5,8 +5,10 @@ import { History } from "../History/History";
 import { Recharge } from "../Recharge/Recharge";
 import { InternalBankTransfer } from "../InternalBankTransfer/InternalBankTransfer";
 import { VerifyOTP } from "../VerifyOTP/VerifyOTP";
+import { VerifyOTPInterBank } from "../VerifyOTPInterBank/VerifyOTPInterBank";
 import { InternalTransferFinish } from "../InternalBankTransfer/InternalTransferFinish";
 import { PartnerBankTransfer } from "../PartnerBankTransfer/PartnerBankTransfer";
+import { ListReceiver } from "../ListReceiver/ListReceiver";
 import { useDispatch, useSelector } from "react-redux";
 import {
   menuModel,
@@ -35,7 +37,7 @@ export function Menu() {
             </li>
 
             <li>
-              <NavLink activeClassName="active" to="/recharge">
+              <NavLink activeClassName="active" to="/list-receiver">
                 Thiết lập danh sách người nhận
               </NavLink>
             </li>
@@ -103,10 +105,11 @@ export function Menu() {
         </nav>
         {/* <InterBankTransfer hidden={menu.categorySelected !== 3} /> */}
         <Route path="/list-accounts" component={ListAccounts} />
-        <Route path="/recharge" component={Recharge} />
+        <Route path="/list-receiver" component={ListReceiver} />
         <Route path="/internalTransfer" component={InternalBankTransfer} />
         <Route path="/partnerTransfer" component={PartnerBankTransfer} />
         <Route path="/verifyOTP" component={VerifyOTP} />
+        <Route path="/verifyOTPInterBank" component={VerifyOTPInterBank} />
         <Route path="/tranferFinish" component={InternalTransferFinish} />
         <Route path="/history" component={History} />
       </div>
